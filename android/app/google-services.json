@@ -1,0 +1,67 @@
+{
+  "project_info": {
+    "project_number": "987636562974",
+    "project_id": "indiscipleship-cb71a",
+    "storage_bucket": "indiscipleship-cb71a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:987636562974:android:ebc7d6f273aeebeb00820f",
+        "android_client_info": {
+          "package_name": "com.example.indiscipleship"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAlQ5f2dU5scJLpk735Z_RoNv22Lyf3C7o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:987636562974:android:da93d57bd5003b7800820f",
+        "android_client_info": {
+          "package_name": "com.example.indiscipleship_admin"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAlQ5f2dU5scJLpk735Z_RoNv22Lyf3C7o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:987636562974:android:fe90d3328a47962e00820f",
+        "android_client_info": {
+          "package_name": "com.indiscipleship.org.indiscipleship"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAlQ5f2dU5scJLpk735Z_RoNv22Lyf3C7o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
