@@ -48,16 +48,24 @@ class RegistrationTrendChart extends StatelessWidget {
                     sideTitles: SideTitles(
                       showTitles: true,
                       reservedSize: 30,
-                      interval: (trends.length / 5).ceilToDouble().clamp(1.0, double.infinity),
+                      interval: (trends.length / 5).ceilToDouble().clamp(
+                        1.0,
+                        double.infinity,
+                      ),
                       getTitlesWidget: (value, meta) {
                         final index = value.toInt();
-                        if (index < 0 || index >= trends.length) return const SizedBox();
+                        if (index < 0 || index >= trends.length) {
+                          return const SizedBox();
+                        }
                         final date = trends[index].date;
                         return Padding(
                           padding: const EdgeInsets.only(top: 8.0),
                           child: Text(
                             DateFormat('MMM d').format(date),
-                            style: const TextStyle(color: AppColors.textSecondary, fontSize: 12),
+                            style: const TextStyle(
+                              color: AppColors.textSecondary,
+                              fontSize: 12,
+                            ),
                           ),
                         );
                       },
@@ -70,13 +78,20 @@ class RegistrationTrendChart extends StatelessWidget {
                       getTitlesWidget: (value, meta) {
                         return Text(
                           value.toInt().toString(),
-                          style: const TextStyle(color: AppColors.textSecondary, fontSize: 12),
+                          style: const TextStyle(
+                            color: AppColors.textSecondary,
+                            fontSize: 12,
+                          ),
                         );
                       },
                     ),
                   ),
-                  topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                  rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  topTitles: const AxisTitles(
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
+                  rightTitles: const AxisTitles(
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
                 ),
                 borderData: FlBorderData(show: false),
                 lineBarsData: [
@@ -89,7 +104,7 @@ class RegistrationTrendChart extends StatelessWidget {
                     dotData: const FlDotData(show: false),
                     belowBarData: BarAreaData(
                       show: true,
-                      color: AppColors.primary.withOpacity(0.1),
+                      color: AppColors.primary.withValues(alpha: 0.1),
                     ),
                   ),
                 ],

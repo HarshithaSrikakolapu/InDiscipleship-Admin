@@ -29,14 +29,17 @@ class ImportHistoryModel {
     required this.status,
   });
 
-  factory ImportHistoryModel.fromJson(Map<String, dynamic> json, String documentId) {
+  factory ImportHistoryModel.fromJson(
+    Map<String, dynamic> json,
+    String documentId,
+  ) {
     return ImportHistoryModel(
       id: documentId,
       fileName: json['fileName'] ?? '',
       fileType: json['fileType'] ?? '',
       importedBy: json['importedBy'] ?? '',
-      importedAt: json['importedAt'] != null 
-          ? (json['importedAt'] as Timestamp).toDate() 
+      importedAt: json['importedAt'] != null
+          ? (json['importedAt'] as Timestamp).toDate()
           : null,
       totalRecords: json['totalRecords'] ?? 0,
       createdRecords: json['createdRecords'] ?? 0,
@@ -53,7 +56,9 @@ class ImportHistoryModel {
       'fileName': fileName,
       'fileType': fileType,
       'importedBy': importedBy,
-      'importedAt': importedAt != null ? Timestamp.fromDate(importedAt!) : FieldValue.serverTimestamp(),
+      'importedAt': importedAt != null
+          ? Timestamp.fromDate(importedAt!)
+          : FieldValue.serverTimestamp(),
       'totalRecords': totalRecords,
       'createdRecords': createdRecords,
       'updatedRecords': updatedRecords,

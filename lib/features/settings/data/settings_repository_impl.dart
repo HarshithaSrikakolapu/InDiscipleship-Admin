@@ -71,10 +71,9 @@ class SettingsRepositoryImpl implements SettingsRepository {
 
   @override
   Future<void> updateLanguages(LanguagesSettings settings) async {
-    await _settingsRef.doc('languages').set(
-      settings.toMap(),
-      SetOptions(merge: true),
-    );
+    await _settingsRef
+        .doc('languages')
+        .set(settings.toMap(), SetOptions(merge: true));
   }
 
   @override
@@ -138,7 +137,10 @@ class SettingsRepositoryImpl implements SettingsRepository {
   }
 
   @override
-  Future<void> updateMaintenance(MaintenanceSettings settings, String userId) async {
+  Future<void> updateMaintenance(
+    MaintenanceSettings settings,
+    String userId,
+  ) async {
     await _settingsRef.doc('maintenance').set({
       ...settings.toMap(),
       'updatedAt': FieldValue.serverTimestamp(),
@@ -148,13 +150,14 @@ class SettingsRepositoryImpl implements SettingsRepository {
 
   @override
   Future<void> updateFeatureFlags(FeatureFlagsSettings settings) async {
-    await _settingsRef.doc('feature_flags').set(
-      settings.toMap(),
-    );
+    await _settingsRef.doc('feature_flags').set(settings.toMap());
   }
 
   @override
-  Future<void> updateAppVersion(AppVersionSettings settings, String userId) async {
+  Future<void> updateAppVersion(
+    AppVersionSettings settings,
+    String userId,
+  ) async {
     await _settingsRef.doc('app_version').set({
       ...settings.toMap(),
       'updatedAt': FieldValue.serverTimestamp(),

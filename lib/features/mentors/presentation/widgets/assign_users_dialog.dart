@@ -31,7 +31,7 @@ class _AssignUsersDialogState extends ConsumerState<AssignUsersDialog> {
       final repository = ref.read(mentorRepositoryProvider);
       final stream = repository.getAvailableDisciplesStream();
       final users = await stream.first;
-      
+
       if (mounted) {
         setState(() {
           _availableUsers = users;
@@ -51,7 +51,8 @@ class _AssignUsersDialogState extends ConsumerState<AssignUsersDialog> {
   @override
   Widget build(BuildContext context) {
     final filteredUsers = _availableUsers.where((user) {
-      final matchesSearch = user.displayName.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+      final matchesSearch =
+          user.displayName.toLowerCase().contains(_searchQuery.toLowerCase()) ||
           user.email.toLowerCase().contains(_searchQuery.toLowerCase());
       return matchesSearch;
     }).toList();
@@ -88,7 +89,9 @@ class _AssignUsersDialogState extends ConsumerState<AssignUsersDialog> {
               decoration: InputDecoration(
                 hintText: 'Search users...',
                 prefixIcon: const Icon(Icons.search),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
               ),
               onChanged: (value) => setState(() => _searchQuery = value),
             ),
@@ -97,37 +100,41 @@ class _AssignUsersDialogState extends ConsumerState<AssignUsersDialog> {
               child: _isLoading
                   ? const Center(child: CircularProgressIndicator())
                   : _error != null
-                      ? Center(child: Text('Error loading users: $_error'))
-                      : filteredUsers.isEmpty
-                          ? const Center(child: Text('No available users found.'))
-                          : ListView.builder(
-                              itemCount: filteredUsers.length,
-                              itemBuilder: (context, index) {
-                                final user = filteredUsers[index];
-                                final isSelected = _selectedUserIds.contains(user.uid);
-                                
-                                return Card(
-                                  margin: const EdgeInsets.only(bottom: 8),
-                                  child: CheckboxListTile(
-                                    value: isSelected,
-                                    onChanged: (bool? value) {
-                                      setState(() {
-                                        if (value == true) {
-                                          _selectedUserIds.add(user.uid);
-                                        } else {
-                                          _selectedUserIds.remove(user.uid);
-                                        }
-                                      });
-                                    },
-                                    secondary: CircleAvatar(
-                                      child: Text(user.displayName.isNotEmpty ? user.displayName[0] : '?'),
-                                    ),
-                                    title: Text(user.displayName),
-                                    subtitle: Text(user.country ?? 'Unknown Country'),
-                                  ),
-                                );
-                              },
+                  ? Center(child: Text('Error loading users: $_error'))
+                  : filteredUsers.isEmpty
+                  ? const Center(child: Text('No available users found.'))
+                  : ListView.builder(
+                      itemCount: filteredUsers.length,
+                      itemBuilder: (context, index) {
+                        final user = filteredUsers[index];
+                        final isSelected = _selectedUserIds.contains(user.uid);
+
+                        return Card(
+                          margin: const EdgeInsets.only(bottom: 8),
+                          child: CheckboxListTile(
+                            value: isSelected,
+                            onChanged: (bool? value) {
+                              setState(() {
+                                if (value == true) {
+                                  _selectedUserIds.add(user.uid);
+                                } else {
+                                  _selectedUserIds.remove(user.uid);
+                                }
+                              });
+                            },
+                            secondary: CircleAvatar(
+                              child: Text(
+                                user.displayName.isNotEmpty
+                                    ? user.displayName[0]
+                                    : '?',
+                              ),
                             ),
+                            title: Text(user.displayName),
+                            subtitle: Text(user.country ?? 'Unknown Country'),
+                          ),
+                        );
+                      },
+                    ),
             ),
             const SizedBox(height: 24),
             Row(
@@ -142,7 +149,9 @@ class _AssignUsersDialogState extends ConsumerState<AssignUsersDialog> {
                   onPressed: _selectedUserIds.isEmpty
                       ? null
                       : () async {
-                          await ref.read(mentorControllerProvider.notifier).assignUsers(
+                          await ref
+                              .read(mentorControllerProvider.notifier)
+                              .assignUsers(
                                 widget.mentorId,
                                 _selectedUserIds.toList(),
                               );

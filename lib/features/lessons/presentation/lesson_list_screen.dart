@@ -19,14 +19,14 @@ class LessonListScreen extends ConsumerStatefulWidget {
 class _LessonListScreenState extends ConsumerState<LessonListScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   LessonModel? _selectedLesson;
-  
+
   String _searchQuery = '';
   int? _selectedWeek;
   bool? _isPublishedFilter;
   int _currentPage = 0;
   final int _itemsPerPage = 10;
-  
-  Set<String> _selectedLessonIds = {};
+
+  final Set<String> _selectedLessonIds = {};
 
   @override
   void initState() {
@@ -83,7 +83,9 @@ class _LessonListScreenState extends ConsumerState<LessonListScreen> {
               children: [
                 Text(
                   'Manage Lessons',
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(fontSize: 24),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleLarge?.copyWith(fontSize: 24),
                 ),
                 Row(
                   children: [
@@ -95,20 +97,39 @@ class _LessonListScreenState extends ConsumerState<LessonListScreen> {
                           });
                         },
                         itemBuilder: (context) => [
-                          const PopupMenuItem(value: 'json', child: Text('Export JSON')),
-                          const PopupMenuItem(value: 'csv', child: Text('Export CSV')),
+                          const PopupMenuItem(
+                            value: 'json',
+                            child: Text('Export JSON'),
+                          ),
+                          const PopupMenuItem(
+                            value: 'csv',
+                            child: Text('Export CSV'),
+                          ),
                         ],
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
                           decoration: BoxDecoration(
                             border: Border.all(color: const Color(0xFFE2E8F0)),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: const Row(
                             children: [
-                              Icon(Icons.file_upload, color: AppColors.textPrimary, size: 20),
+                              Icon(
+                                Icons.file_upload,
+                                color: AppColors.textPrimary,
+                                size: 20,
+                              ),
                               SizedBox(width: 8),
-                              Text('Export', style: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.w500)),
+                              Text(
+                                'Export',
+                                style: TextStyle(
+                                  color: AppColors.textPrimary,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -125,15 +146,21 @@ class _LessonListScreenState extends ConsumerState<LessonListScreen> {
               ],
             ),
             const SizedBox(height: 24),
-            
+
             if (state.error != null)
               Container(
                 margin: const EdgeInsets.only(bottom: 16),
                 padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(color: AppColors.danger.withOpacity(0.1), borderRadius: BorderRadius.circular(8)),
-                child: Text(state.error!, style: const TextStyle(color: AppColors.danger)),
+                decoration: BoxDecoration(
+                  color: AppColors.danger.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  state.error!,
+                  style: const TextStyle(color: AppColors.danger),
+                ),
               ),
-              
+
             Expanded(
               child: Card(
                 child: Column(
@@ -148,10 +175,26 @@ class _LessonListScreenState extends ConsumerState<LessonListScreen> {
                             child: TextField(
                               decoration: InputDecoration(
                                 hintText: 'Search Title, Topic, Verse...',
-                                prefixIcon: const Icon(Icons.search, color: AppColors.textSecondary),
-                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: const BorderSide(color: Color(0xFFE2E8F0))),
-                                enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: const BorderSide(color: Color(0xFFE2E8F0))),
-                                contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
+                                prefixIcon: const Icon(
+                                  Icons.search,
+                                  color: AppColors.textSecondary,
+                                ),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: const BorderSide(
+                                    color: Color(0xFFE2E8F0),
+                                  ),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: const BorderSide(
+                                    color: Color(0xFFE2E8F0),
+                                  ),
+                                ),
+                                contentPadding: const EdgeInsets.symmetric(
+                                  vertical: 0,
+                                  horizontal: 16,
+                                ),
                                 filled: true,
                                 fillColor: Colors.white,
                               ),
@@ -166,17 +209,39 @@ class _LessonListScreenState extends ConsumerState<LessonListScreen> {
                             flex: 2,
                             child: DropdownButtonFormField<int?>(
                               decoration: InputDecoration(
-                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: const BorderSide(color: Color(0xFFE2E8F0))),
-                                enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: const BorderSide(color: Color(0xFFE2E8F0))),
-                                contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: const BorderSide(
+                                    color: Color(0xFFE2E8F0),
+                                  ),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: const BorderSide(
+                                    color: Color(0xFFE2E8F0),
+                                  ),
+                                ),
+                                contentPadding: const EdgeInsets.symmetric(
+                                  vertical: 0,
+                                  horizontal: 16,
+                                ),
                                 filled: true,
                                 fillColor: Colors.white,
                               ),
-                              value: _selectedWeek,
+                              initialValue: _selectedWeek,
                               hint: const Text('All Weeks'),
                               items: [
-                                const DropdownMenuItem(value: null, child: Text('All Weeks')),
-                                ...List.generate(12, (index) => DropdownMenuItem(value: index + 1, child: Text('Week ${index + 1}'))),
+                                const DropdownMenuItem(
+                                  value: null,
+                                  child: Text('All Weeks'),
+                                ),
+                                ...List.generate(
+                                  12,
+                                  (index) => DropdownMenuItem(
+                                    value: index + 1,
+                                    child: Text('Week ${index + 1}'),
+                                  ),
+                                ),
                               ],
                               onChanged: (val) => setState(() {
                                 _selectedWeek = val;
@@ -190,18 +255,40 @@ class _LessonListScreenState extends ConsumerState<LessonListScreen> {
                               flex: 2,
                               child: DropdownButtonFormField<bool?>(
                                 decoration: InputDecoration(
-                                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: const BorderSide(color: Color(0xFFE2E8F0))),
-                                  enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: const BorderSide(color: Color(0xFFE2E8F0))),
-                                  contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                    borderSide: const BorderSide(
+                                      color: Color(0xFFE2E8F0),
+                                    ),
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                    borderSide: const BorderSide(
+                                      color: Color(0xFFE2E8F0),
+                                    ),
+                                  ),
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    vertical: 0,
+                                    horizontal: 16,
+                                  ),
                                   filled: true,
                                   fillColor: Colors.white,
                                 ),
-                                value: _isPublishedFilter,
+                                initialValue: _isPublishedFilter,
                                 hint: const Text('Status'),
                                 items: const [
-                                  DropdownMenuItem(value: null, child: Text('All Statuses')),
-                                  DropdownMenuItem(value: true, child: Text('Published')),
-                                  DropdownMenuItem(value: false, child: Text('Unpublished')),
+                                  DropdownMenuItem(
+                                    value: null,
+                                    child: Text('All Statuses'),
+                                  ),
+                                  DropdownMenuItem(
+                                    value: true,
+                                    child: Text('Published'),
+                                  ),
+                                  DropdownMenuItem(
+                                    value: false,
+                                    child: Text('Unpublished'),
+                                  ),
                                 ],
                                 onChanged: (val) => setState(() {
                                   _isPublishedFilter = val;
@@ -219,7 +306,9 @@ class _LessonListScreenState extends ConsumerState<LessonListScreen> {
                                 }
                                 setState(() => _selectedLessonIds.clear());
                               },
-                              style: ElevatedButton.styleFrom(backgroundColor: AppColors.success),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.success,
+                              ),
                               icon: const Icon(Icons.check_circle, size: 18),
                               label: const Text('Publish'),
                             ),
@@ -231,7 +320,9 @@ class _LessonListScreenState extends ConsumerState<LessonListScreen> {
                                 }
                                 setState(() => _selectedLessonIds.clear());
                               },
-                              style: ElevatedButton.styleFrom(backgroundColor: AppColors.warning),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.warning,
+                              ),
                               icon: const Icon(Icons.cancel, size: 18),
                               label: const Text('Unpublish'),
                             ),
@@ -244,7 +335,9 @@ class _LessonListScreenState extends ConsumerState<LessonListScreen> {
                                 }
                                 setState(() => _selectedLessonIds.clear());
                               },
-                              style: ElevatedButton.styleFrom(backgroundColor: AppColors.danger),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.danger,
+                              ),
                               icon: const Icon(Icons.delete, size: 18),
                               label: const Text('Delete'),
                             ),
@@ -253,11 +346,14 @@ class _LessonListScreenState extends ConsumerState<LessonListScreen> {
                       ),
                     ),
                     const Divider(height: 1, color: Color(0xFFE2E8F0)),
-                    
+
                     // Header Row
                     Container(
                       color: AppColors.background,
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
                       child: Row(
                         children: [
                           const SizedBox(width: 32), // Checkbox space
@@ -278,46 +374,78 @@ class _LessonListScreenState extends ConsumerState<LessonListScreen> {
                       child: lessonsAsync.when(
                         data: (lessons) {
                           final filteredLessons = lessons.where((lesson) {
-                            final matchesSearch = lesson.lessonTitle.toLowerCase().contains(_searchQuery) ||
-                                lesson.topic.toLowerCase().contains(_searchQuery) ||
-                                lesson.bibleVerse.toLowerCase().contains(_searchQuery);
-                            final matchesWeek = _selectedWeek == null || lesson.week == _selectedWeek;
-                            final matchesStatus = _isPublishedFilter == null || lesson.isPublished == _isPublishedFilter;
-                            return matchesSearch && matchesWeek && matchesStatus;
+                            final matchesSearch =
+                                lesson.lessonTitle.toLowerCase().contains(
+                                  _searchQuery,
+                                ) ||
+                                lesson.topic.toLowerCase().contains(
+                                  _searchQuery,
+                                ) ||
+                                lesson.bibleVerse.toLowerCase().contains(
+                                  _searchQuery,
+                                );
+                            final matchesWeek =
+                                _selectedWeek == null ||
+                                lesson.week == _selectedWeek;
+                            final matchesStatus =
+                                _isPublishedFilter == null ||
+                                lesson.isPublished == _isPublishedFilter;
+                            return matchesSearch &&
+                                matchesWeek &&
+                                matchesStatus;
                           }).toList();
 
                           if (filteredLessons.isEmpty) {
-                            return const Center(child: Text('No lessons found.'));
+                            return const Center(
+                              child: Text('No lessons found.'),
+                            );
                           }
 
                           final startIndex = _currentPage * _itemsPerPage;
-                          final endIndex = (startIndex + _itemsPerPage < filteredLessons.length)
+                          final endIndex =
+                              (startIndex + _itemsPerPage <
+                                  filteredLessons.length)
                               ? startIndex + _itemsPerPage
                               : filteredLessons.length;
-                          final pageLessons = filteredLessons.sublist(startIndex, endIndex);
+                          final pageLessons = filteredLessons.sublist(
+                            startIndex,
+                            endIndex,
+                          );
 
                           return ListView.separated(
                             itemCount: pageLessons.length,
-                            separatorBuilder: (context, index) => const Divider(height: 1, color: Color(0xFFE2E8F0)),
+                            separatorBuilder: (context, index) => const Divider(
+                              height: 1,
+                              color: Color(0xFFE2E8F0),
+                            ),
                             itemBuilder: (context, index) {
                               final lesson = pageLessons[index];
                               return InkWell(
                                 onTap: () => _openLessonForm(lesson),
                                 hoverColor: AppColors.background,
                                 child: Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 12,
+                                  ),
                                   child: Row(
                                     children: [
                                       SizedBox(
                                         width: 32,
                                         child: Checkbox(
-                                          value: _selectedLessonIds.contains(lesson.lessonId),
+                                          value: _selectedLessonIds.contains(
+                                            lesson.lessonId,
+                                          ),
                                           onChanged: (val) {
                                             setState(() {
                                               if (val == true) {
-                                                _selectedLessonIds.add(lesson.lessonId);
+                                                _selectedLessonIds.add(
+                                                  lesson.lessonId,
+                                                );
                                               } else {
-                                                _selectedLessonIds.remove(lesson.lessonId);
+                                                _selectedLessonIds.remove(
+                                                  lesson.lessonId,
+                                                );
                                               }
                                             });
                                           },
@@ -326,19 +454,64 @@ class _LessonListScreenState extends ConsumerState<LessonListScreen> {
                                       Expanded(
                                         flex: 1,
                                         child: Container(
-                                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                          decoration: BoxDecoration(color: AppColors.background, borderRadius: BorderRadius.circular(4)),
-                                          child: Text('W${lesson.week}', textAlign: TextAlign.center, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 8,
+                                            vertical: 4,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: AppColors.background,
+                                            borderRadius: BorderRadius.circular(
+                                              4,
+                                            ),
+                                          ),
+                                          child: Text(
+                                            'W${lesson.week}',
+                                            textAlign: TextAlign.center,
+                                            style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 12,
+                                            ),
+                                          ),
                                         ),
                                       ),
                                       const SizedBox(width: 8),
                                       Expanded(
                                         flex: 1,
-                                        child: Text('D${lesson.day}', style: const TextStyle(fontWeight: FontWeight.w500, color: AppColors.textSecondary)),
+                                        child: Text(
+                                          'D${lesson.day}',
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.w500,
+                                            color: AppColors.textSecondary,
+                                          ),
+                                        ),
                                       ),
-                                      Expanded(flex: 4, child: Text(lesson.lessonTitle, style: const TextStyle(fontWeight: FontWeight.w600))),
-                                      Expanded(flex: 3, child: Text(lesson.topic, style: const TextStyle(color: AppColors.textSecondary))),
-                                      Expanded(flex: 3, child: Text(lesson.bibleVerse, style: const TextStyle(color: AppColors.textSecondary))),
+                                      Expanded(
+                                        flex: 4,
+                                        child: Text(
+                                          lesson.lessonTitle,
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        flex: 3,
+                                        child: Text(
+                                          lesson.topic,
+                                          style: const TextStyle(
+                                            color: AppColors.textSecondary,
+                                          ),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        flex: 3,
+                                        child: Text(
+                                          lesson.bibleVerse,
+                                          style: const TextStyle(
+                                            color: AppColors.textSecondary,
+                                          ),
+                                        ),
+                                      ),
                                       Expanded(
                                         flex: 2,
                                         child: Align(
@@ -346,15 +519,23 @@ class _LessonListScreenState extends ConsumerState<LessonListScreen> {
                                           child: Switch(
                                             value: lesson.isPublished,
                                             onChanged: (val) {
-                                              controller.togglePublish(lesson.lessonId, val);
+                                              controller.togglePublish(
+                                                lesson.lessonId,
+                                                val,
+                                              );
                                             },
-                                            activeColor: AppColors.success,
+                                            activeThumbColor: AppColors.success,
                                           ),
                                         ),
                                       ),
                                       IconButton(
-                                        icon: const Icon(Icons.edit, size: 20, color: AppColors.textSecondary),
-                                        onPressed: () => _openLessonForm(lesson),
+                                        icon: const Icon(
+                                          Icons.edit,
+                                          size: 20,
+                                          color: AppColors.textSecondary,
+                                        ),
+                                        onPressed: () =>
+                                            _openLessonForm(lesson),
                                       ),
                                     ],
                                   ),
@@ -364,7 +545,12 @@ class _LessonListScreenState extends ConsumerState<LessonListScreen> {
                           );
                         },
                         loading: () => _buildSkeletonRows(),
-                        error: (error, stackTrace) => Center(child: Text('Error: $error', style: const TextStyle(color: AppColors.danger))),
+                        error: (error, stackTrace) => Center(
+                          child: Text(
+                            'Error: $error',
+                            style: const TextStyle(color: AppColors.danger),
+                          ),
+                        ),
                       ),
                     ),
                     const Divider(height: 1, color: Color(0xFFE2E8F0)),
@@ -373,29 +559,50 @@ class _LessonListScreenState extends ConsumerState<LessonListScreen> {
                     lessonsAsync.maybeWhen(
                       data: (lessons) {
                         final filteredLessons = lessons.where((lesson) {
-                          final matchesSearch = lesson.lessonTitle.toLowerCase().contains(_searchQuery) ||
-                              lesson.topic.toLowerCase().contains(_searchQuery) ||
-                              lesson.bibleVerse.toLowerCase().contains(_searchQuery);
-                          final matchesWeek = _selectedWeek == null || lesson.week == _selectedWeek;
-                          final matchesStatus = _isPublishedFilter == null || lesson.isPublished == _isPublishedFilter;
+                          final matchesSearch =
+                              lesson.lessonTitle.toLowerCase().contains(
+                                _searchQuery,
+                              ) ||
+                              lesson.topic.toLowerCase().contains(
+                                _searchQuery,
+                              ) ||
+                              lesson.bibleVerse.toLowerCase().contains(
+                                _searchQuery,
+                              );
+                          final matchesWeek =
+                              _selectedWeek == null ||
+                              lesson.week == _selectedWeek;
+                          final matchesStatus =
+                              _isPublishedFilter == null ||
+                              lesson.isPublished == _isPublishedFilter;
                           return matchesSearch && matchesWeek && matchesStatus;
                         }).toList();
-                        final totalPages = (filteredLessons.length / _itemsPerPage).ceil();
+                        final totalPages =
+                            (filteredLessons.length / _itemsPerPage).ceil();
 
                         return Padding(
                           padding: const EdgeInsets.all(12.0),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
-                              Text('Page ${_currentPage + 1} of ${totalPages == 0 ? 1 : totalPages}', style: const TextStyle(color: AppColors.textSecondary)),
+                              Text(
+                                'Page ${_currentPage + 1} of ${totalPages == 0 ? 1 : totalPages}',
+                                style: const TextStyle(
+                                  color: AppColors.textSecondary,
+                                ),
+                              ),
                               const SizedBox(width: 16),
                               IconButton(
                                 icon: const Icon(Icons.chevron_left),
-                                onPressed: _currentPage > 0 ? () => setState(() => _currentPage--) : null,
+                                onPressed: _currentPage > 0
+                                    ? () => setState(() => _currentPage--)
+                                    : null,
                               ),
                               IconButton(
                                 icon: const Icon(Icons.chevron_right),
-                                onPressed: _currentPage < totalPages - 1 ? () => setState(() => _currentPage++) : null,
+                                onPressed: _currentPage < totalPages - 1
+                                    ? () => setState(() => _currentPage++)
+                                    : null,
                               ),
                             ],
                           ),
@@ -430,19 +637,63 @@ class _LessonListScreenState extends ConsumerState<LessonListScreen> {
   Widget _buildSkeletonRows() {
     return ListView.separated(
       itemCount: 5,
-      separatorBuilder: (context, index) => const Divider(height: 1, color: Color(0xFFE2E8F0)),
+      separatorBuilder: (context, index) =>
+          const Divider(height: 1, color: Color(0xFFE2E8F0)),
       itemBuilder: (context, index) {
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           child: Row(
             children: [
               const SizedBox(width: 32),
-              Expanded(flex: 1, child: Container(height: 24, color: Colors.grey.withOpacity(0.2), margin: const EdgeInsets.only(right: 8))),
-              Expanded(flex: 1, child: Container(height: 16, color: Colors.grey.withOpacity(0.2), margin: const EdgeInsets.only(right: 16))),
-              Expanded(flex: 4, child: Container(height: 16, color: Colors.grey.withOpacity(0.2), margin: const EdgeInsets.only(right: 16))),
-              Expanded(flex: 3, child: Container(height: 16, color: Colors.grey.withOpacity(0.2), margin: const EdgeInsets.only(right: 16))),
-              Expanded(flex: 3, child: Container(height: 16, color: Colors.grey.withOpacity(0.2), margin: const EdgeInsets.only(right: 16))),
-              Expanded(flex: 2, child: Container(width: 40, height: 24, color: Colors.grey.withOpacity(0.2), margin: const EdgeInsets.only(right: 16))),
+              Expanded(
+                flex: 1,
+                child: Container(
+                  height: 24,
+                  color: Colors.grey.withValues(alpha: 0.2),
+                  margin: const EdgeInsets.only(right: 8),
+                ),
+              ),
+              Expanded(
+                flex: 1,
+                child: Container(
+                  height: 16,
+                  color: Colors.grey.withValues(alpha: 0.2),
+                  margin: const EdgeInsets.only(right: 16),
+                ),
+              ),
+              Expanded(
+                flex: 4,
+                child: Container(
+                  height: 16,
+                  color: Colors.grey.withValues(alpha: 0.2),
+                  margin: const EdgeInsets.only(right: 16),
+                ),
+              ),
+              Expanded(
+                flex: 3,
+                child: Container(
+                  height: 16,
+                  color: Colors.grey.withValues(alpha: 0.2),
+                  margin: const EdgeInsets.only(right: 16),
+                ),
+              ),
+              Expanded(
+                flex: 3,
+                child: Container(
+                  height: 16,
+                  color: Colors.grey.withValues(alpha: 0.2),
+                  margin: const EdgeInsets.only(right: 16),
+                ),
+              ),
+              Expanded(
+                flex: 2,
+                child: Container(
+                  width: 40,
+                  height: 24,
+                  color: Colors.grey.withValues(alpha: 0.2),
+                  margin: const EdgeInsets.only(right: 16),
+                ),
+              ),
               const SizedBox(width: 40),
             ],
           ),

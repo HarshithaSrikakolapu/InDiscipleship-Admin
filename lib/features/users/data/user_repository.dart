@@ -28,9 +28,11 @@ class UserRepository {
         .collection('users')
         .orderBy('createdAt', descending: true)
         .snapshots()
-        .map((snapshot) => snapshot.docs
-            .map((doc) => AppUser.fromFirestore(doc.data(), doc.id))
-            .toList());
+        .map(
+          (snapshot) => snapshot.docs
+              .map((doc) => AppUser.fromFirestore(doc.data(), doc.id))
+              .toList(),
+        );
   }
 
   Stream<AppUser?> getUserStreamById(String uid) {
@@ -44,7 +46,9 @@ class UserRepository {
 
   Future<void> updateUserStatus(String uid, bool isActive) async {
     try {
-      await _firestore.collection('users').doc(uid).update({'isActive': isActive});
+      await _firestore.collection('users').doc(uid).update({
+        'isActive': isActive,
+      });
     } catch (e) {
       throw Exception('Failed to update user status: $e');
     }

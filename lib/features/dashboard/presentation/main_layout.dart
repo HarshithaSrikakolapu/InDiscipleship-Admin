@@ -7,10 +7,7 @@ import 'widgets/top_app_bar.dart';
 class MainLayout extends StatelessWidget {
   final StatefulNavigationShell navigationShell;
 
-  const MainLayout({
-    super.key,
-    required this.navigationShell,
-  });
+  const MainLayout({super.key, required this.navigationShell});
 
   @override
   Widget build(BuildContext context) {
@@ -35,9 +32,7 @@ class MainLayout extends StatelessWidget {
                     },
                   ),
                 ),
-                Expanded(
-                  child: navigationShell,
-                ),
+                Expanded(child: navigationShell),
               ],
             ),
           ),

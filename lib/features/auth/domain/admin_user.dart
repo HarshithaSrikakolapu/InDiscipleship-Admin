@@ -11,7 +11,10 @@ class AdminUser {
     required this.isActive,
   });
 
-  factory AdminUser.fromFirestore(Map<String, dynamic> data, String documentId) {
+  factory AdminUser.fromFirestore(
+    Map<String, dynamic> data,
+    String documentId,
+  ) {
     return AdminUser(
       uid: documentId,
       email: data['email'] ?? '',
@@ -21,10 +24,6 @@ class AdminUser {
   }
 
   Map<String, dynamic> toFirestore() {
-    return {
-      'email': email,
-      'role': role,
-      'isActive': isActive,
-    };
+    return {'email': email, 'role': role, 'isActive': isActive};
   }
 }

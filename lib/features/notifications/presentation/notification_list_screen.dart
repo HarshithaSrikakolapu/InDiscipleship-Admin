@@ -10,10 +10,12 @@ class NotificationListScreen extends ConsumerStatefulWidget {
   const NotificationListScreen({super.key});
 
   @override
-  ConsumerState<NotificationListScreen> createState() => _NotificationListScreenState();
+  ConsumerState<NotificationListScreen> createState() =>
+      _NotificationListScreenState();
 }
 
-class _NotificationListScreenState extends ConsumerState<NotificationListScreen> {
+class _NotificationListScreenState
+    extends ConsumerState<NotificationListScreen> {
   String _searchQuery = '';
   NotificationStatus? _statusFilter;
 
@@ -21,9 +23,9 @@ class _NotificationListScreenState extends ConsumerState<NotificationListScreen>
   Widget build(BuildContext context) {
     ref.listen(notificationControllerProvider, (previous, next) {
       if (next.hasError) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Action failed: ${next.error}')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Action failed: ${next.error}')));
       }
     });
 
@@ -54,7 +56,10 @@ class _NotificationListScreenState extends ConsumerState<NotificationListScreen>
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 16,
+                    ),
                   ),
                 ),
               ],
@@ -68,31 +73,43 @@ class _NotificationListScreenState extends ConsumerState<NotificationListScreen>
                 elevation: 0,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
-                  side: BorderSide(color: AppColors.border.withValues(alpha: 0.5)),
+                  side: BorderSide(
+                    color: AppColors.border.withValues(alpha: 0.5),
+                  ),
                 ),
                 child: notificationsAsync.when(
                   data: (notifications) {
                     final filtered = notifications.where((n) {
-                      final matchesSearch = n.title.toLowerCase().contains(_searchQuery.toLowerCase()) || 
-                                            n.message.toLowerCase().contains(_searchQuery.toLowerCase());
-                      final matchesStatus = _statusFilter == null || n.status == _statusFilter;
+                      final matchesSearch =
+                          n.title.toLowerCase().contains(
+                            _searchQuery.toLowerCase(),
+                          ) ||
+                          n.message.toLowerCase().contains(
+                            _searchQuery.toLowerCase(),
+                          );
+                      final matchesStatus =
+                          _statusFilter == null || n.status == _statusFilter;
                       return matchesSearch && matchesStatus;
                     }).toList();
 
                     if (filtered.isEmpty) {
-                      return const Center(child: Text('No notifications found.'));
+                      return const Center(
+                        child: Text('No notifications found.'),
+                      );
                     }
 
                     return ListView.separated(
                       padding: const EdgeInsets.all(16),
                       itemCount: filtered.length,
-                      separatorBuilder: (context, index) => const Divider(height: 1),
+                      separatorBuilder: (context, index) =>
+                          const Divider(height: 1),
                       itemBuilder: (context, index) {
                         return _buildNotificationRow(filtered[index]);
                       },
                     );
                   },
-                  loading: () => const Center(child: CircularProgressIndicator()),
+                  loading: () =>
+                      const Center(child: CircularProgressIndicator()),
                   error: (err, stack) => Center(child: Text('Error: $err')),
                 ),
               ),
@@ -120,7 +137,10 @@ class _NotificationListScreenState extends ConsumerState<NotificationListScreen>
                 borderRadius: BorderRadius.circular(8),
                 borderSide: BorderSide(color: Colors.grey[300]!),
               ),
-              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 12,
+              ),
             ),
             onChanged: (val) => setState(() => _searchQuery = val),
           ),
@@ -138,14 +158,20 @@ class _NotificationListScreenState extends ConsumerState<NotificationListScreen>
                 borderRadius: BorderRadius.circular(8),
                 borderSide: BorderSide(color: Colors.grey[300]!),
               ),
-              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 12,
+              ),
             ),
-            value: _statusFilter,
+            initialValue: _statusFilter,
             hint: const Text('All Statuses'),
             items: [
               const DropdownMenuItem(value: null, child: Text('All Statuses')),
               ...NotificationStatus.values.map(
-                (s) => DropdownMenuItem(value: s, child: Text(s.name.toUpperCase())),
+                (s) => DropdownMenuItem(
+                  value: s,
+                  child: Text(s.name.toUpperCase()),
+                ),
               ),
             ],
             onChanged: (val) => setState(() => _statusFilter = val),
@@ -171,7 +197,10 @@ class _NotificationListScreenState extends ConsumerState<NotificationListScreen>
                 children: [
                   Text(
                     n.title,
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
                   ),
                   const SizedBox(height: 4),
                   Text(
@@ -192,7 +221,9 @@ class _NotificationListScreenState extends ConsumerState<NotificationListScreen>
                   const SizedBox(height: 4),
                   Text(
                     n.deliveryType == 'scheduled'
-                        ? (n.scheduledAt != null ? 'Scheduled: ${DateFormat('dd MMM yyyy, HH:mm').format(n.scheduledAt!)}' : 'Scheduled')
+                        ? (n.scheduledAt != null
+                              ? 'Scheduled: ${DateFormat('dd MMM yyyy, HH:mm').format(n.scheduledAt!)}'
+                              : 'Scheduled')
                         : 'Immediate',
                     style: TextStyle(color: Colors.grey[500], fontSize: 12),
                   ),
@@ -213,26 +244,44 @@ class _NotificationListScreenState extends ConsumerState<NotificationListScreen>
                   icon: const Icon(Icons.copy, size: 20),
                   tooltip: 'Duplicate',
                   onPressed: () {
-                    ref.read(notificationControllerProvider.notifier).duplicateNotification(n.id, 'admin'); // Replace with actual user ID
+                    ref
+                        .read(notificationControllerProvider.notifier)
+                        .duplicateNotification(
+                          n.id,
+                          'admin',
+                        ); // Replace with actual user ID
                   },
                 ),
                 if (n.status == NotificationStatus.scheduled)
                   IconButton(
-                    icon: const Icon(Icons.cancel_outlined, size: 20, color: Colors.orange),
+                    icon: const Icon(
+                      Icons.cancel_outlined,
+                      size: 20,
+                      color: Colors.orange,
+                    ),
                     tooltip: 'Cancel Schedule',
                     onPressed: () {
-                      ref.read(notificationControllerProvider.notifier).cancelScheduled(n.id);
+                      ref
+                          .read(notificationControllerProvider.notifier)
+                          .cancelScheduled(n.id);
                     },
                   ),
-                if (n.status == NotificationStatus.draft || n.status == NotificationStatus.scheduled)
+                if (n.status == NotificationStatus.draft ||
+                    n.status == NotificationStatus.scheduled)
                   IconButton(
                     icon: const Icon(Icons.edit, size: 20),
                     tooltip: 'Edit',
-                    onPressed: () => context.push('/notifications/${n.id}/edit', extra: n),
+                    onPressed: () =>
+                        context.push('/notifications/${n.id}/edit', extra: n),
                   ),
-                if (n.status == NotificationStatus.draft || n.status == NotificationStatus.failed)
+                if (n.status == NotificationStatus.draft ||
+                    n.status == NotificationStatus.failed)
                   IconButton(
-                    icon: const Icon(Icons.delete_outline, size: 20, color: Colors.red),
+                    icon: const Icon(
+                      Icons.delete_outline,
+                      size: 20,
+                      color: Colors.red,
+                    ),
                     tooltip: 'Delete',
                     onPressed: () async {
                       final confirm = await showDialog<bool>(
@@ -241,16 +290,24 @@ class _NotificationListScreenState extends ConsumerState<NotificationListScreen>
                           title: const Text('Delete Notification?'),
                           content: const Text('This action cannot be undone.'),
                           actions: [
-                            TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
+                            TextButton(
+                              onPressed: () => Navigator.pop(ctx, false),
+                              child: const Text('Cancel'),
+                            ),
                             TextButton(
                               onPressed: () => Navigator.pop(ctx, true),
-                              child: const Text('Delete', style: TextStyle(color: Colors.red)),
+                              child: const Text(
+                                'Delete',
+                                style: TextStyle(color: Colors.red),
+                              ),
                             ),
                           ],
                         ),
                       );
                       if (confirm == true) {
-                        ref.read(notificationControllerProvider.notifier).deleteNotification(n.id);
+                        ref
+                            .read(notificationControllerProvider.notifier)
+                            .deleteNotification(n.id);
                       }
                     },
                   ),
@@ -297,7 +354,11 @@ class _NotificationListScreenState extends ConsumerState<NotificationListScreen>
       ),
       child: Text(
         status.name.toUpperCase(),
-        style: TextStyle(color: textColor, fontSize: 10, fontWeight: FontWeight.bold),
+        style: TextStyle(
+          color: textColor,
+          fontSize: 10,
+          fontWeight: FontWeight.bold,
+        ),
       ),
     );
   }

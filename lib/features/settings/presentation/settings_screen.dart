@@ -43,8 +43,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Change Password', style: TextStyle(fontWeight: FontWeight.bold)),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: const Text(
+            'Change Password',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
           content: Form(
             key: formKey,
             child: Column(
@@ -53,15 +58,21 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 TextFormField(
                   controller: passController,
                   obscureText: true,
-                  validator: (v) => v!.length < 6 ? 'Password must be at least 6 characters' : null,
+                  validator: (v) => v!.length < 6
+                      ? 'Password must be at least 6 characters'
+                      : null,
                   decoration: const InputDecoration(labelText: 'New Password'),
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: confirmController,
                   obscureText: true,
-                  validator: (v) => v != passController.text ? 'Passwords do not match' : null,
-                  decoration: const InputDecoration(labelText: 'Confirm Password'),
+                  validator: (v) => v != passController.text
+                      ? 'Passwords do not match'
+                      : null,
+                  decoration: const InputDecoration(
+                    labelText: 'Confirm Password',
+                  ),
                 ),
               ],
             ),
@@ -75,23 +86,36 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               onPressed: () async {
                 if (formKey.currentState!.validate()) {
                   try {
-                    await ref.read(authRepositoryProvider).updatePassword(passController.text.trim());
+                    await ref
+                        .read(authRepositoryProvider)
+                        .updatePassword(passController.text.trim());
                     if (context.mounted) {
                       Navigator.pop(context);
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Password updated successfully!'), backgroundColor: AppColors.success),
+                        const SnackBar(
+                          content: Text('Password updated successfully!'),
+                          backgroundColor: AppColors.success,
+                        ),
                       );
                     }
                   } catch (e) {
                     if (context.mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Error updating password: ${e.toString()}'), backgroundColor: AppColors.danger),
+                        SnackBar(
+                          content: Text(
+                            'Error updating password: ${e.toString()}',
+                          ),
+                          backgroundColor: AppColors.danger,
+                        ),
                       );
                     }
                   }
                 }
               },
-              style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary, foregroundColor: Colors.white),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary,
+                foregroundColor: Colors.white,
+              ),
               child: const Text('Change Password'),
             ),
           ],
@@ -123,10 +147,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               Text(
                 'Settings Portal',
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary,
-                    ),
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textPrimary,
+                ),
               ),
               const SizedBox(height: 8),
               const Text(
@@ -217,21 +241,27 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
-              color: isSelected ? AppColors.primary.withOpacity(0.08) : Colors.transparent,
+              color: isSelected
+                  ? AppColors.primary.withValues(alpha: 0.08)
+                  : Colors.transparent,
               borderRadius: BorderRadius.circular(8),
             ),
             child: Row(
               children: [
                 Icon(
                   tab['icon'],
-                  color: isSelected ? AppColors.primary : AppColors.textSecondary,
+                  color: isSelected
+                      ? AppColors.primary
+                      : AppColors.textSecondary,
                   size: 20,
                 ),
                 const SizedBox(width: 12),
                 Text(
                   tab['label'],
                   style: TextStyle(
-                    color: isSelected ? AppColors.primary : AppColors.textPrimary,
+                    color: isSelected
+                        ? AppColors.primary
+                        : AppColors.textPrimary,
                     fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
                     fontSize: 15,
                   ),
@@ -254,13 +284,21 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           });
           context.go('/settings?tab=${tab['key']}');
         },
-        icon: Icon(tab['icon'], size: 16, color: isSelected ? Colors.white : AppColors.textSecondary),
+        icon: Icon(
+          tab['icon'],
+          size: 16,
+          color: isSelected ? Colors.white : AppColors.textSecondary,
+        ),
         label: Text(tab['label']),
         style: OutlinedButton.styleFrom(
           backgroundColor: isSelected ? AppColors.primary : Colors.white,
           foregroundColor: isSelected ? Colors.white : AppColors.textPrimary,
-          side: BorderSide(color: isSelected ? AppColors.primary : AppColors.border),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          side: BorderSide(
+            color: isSelected ? AppColors.primary : AppColors.border,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
           padding: const EdgeInsets.symmetric(horizontal: 16),
         ),
       ),
@@ -283,8 +321,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           updatedBy: settings.privacy.updatedBy,
           publishedAt: settings.privacy.publishedAt,
           publishedBy: settings.privacy.publishedBy,
-          onSave: (c, u) => ref.read(settingsControllerProvider.notifier).savePrivacy(c, u),
-          onPublish: (c, u) => ref.read(settingsControllerProvider.notifier).publishPrivacy(c, u),
+          onSave: (c, u) =>
+              ref.read(settingsControllerProvider.notifier).savePrivacy(c, u),
+          onPublish: (c, u) => ref
+              .read(settingsControllerProvider.notifier)
+              .publishPrivacy(c, u),
         );
       case 'terms':
         return SettingsPolicyTab(
@@ -296,8 +337,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           updatedBy: settings.terms.updatedBy,
           publishedAt: settings.terms.publishedAt,
           publishedBy: settings.terms.publishedBy,
-          onSave: (c, u) => ref.read(settingsControllerProvider.notifier).saveTerms(c, u),
-          onPublish: (c, u) => ref.read(settingsControllerProvider.notifier).publishTerms(c, u),
+          onSave: (c, u) =>
+              ref.read(settingsControllerProvider.notifier).saveTerms(c, u),
+          onPublish: (c, u) =>
+              ref.read(settingsControllerProvider.notifier).publishTerms(c, u),
         );
       case 'maintenance':
         return SettingsMaintenanceTab(settings: settings.maintenance);
@@ -330,7 +373,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('Admin Account Info', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
+                const Text(
+                  'Admin Account Info',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
                 const SizedBox(height: 24),
                 Row(
                   children: [
@@ -343,9 +393,23 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text('Email Address', style: TextStyle(color: AppColors.textSecondary, fontSize: 12, fontWeight: FontWeight.w600)),
+                        const Text(
+                          'Email Address',
+                          style: TextStyle(
+                            color: AppColors.textSecondary,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                         const SizedBox(height: 4),
-                        Text(user?.email ?? 'Unknown Email', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
+                        Text(
+                          user?.email ?? 'Unknown Email',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.textPrimary,
+                          ),
+                        ),
                       ],
                     ),
                     const Spacer(),
@@ -356,7 +420,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       style: OutlinedButton.styleFrom(
                         foregroundColor: AppColors.primary,
                         side: const BorderSide(color: AppColors.primary),
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
                       ),
                     ),
                   ],
@@ -381,17 +448,32 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: const [
-                    Text('Danger Zone', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.danger)),
+                    Text(
+                      'Danger Zone',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.danger,
+                      ),
+                    ),
                     SizedBox(height: 8),
-                    Text('Log out of the admin portal securely.', style: TextStyle(color: AppColors.textSecondary)),
+                    Text(
+                      'Log out of the admin portal securely.',
+                      style: TextStyle(color: AppColors.textSecondary),
+                    ),
                   ],
                 ),
                 ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.danger,
                     foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 16,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
                   ),
                   onPressed: () async {
                     await ref.read(authRepositoryProvider).signOut();
@@ -412,45 +494,57 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
   Widget _buildSkeleton() {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          width: 200,
-          height: 32,
-          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(4)),
-        ),
-        const SizedBox(height: 8),
-        Container(
-          width: 350,
-          height: 16,
-          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(4)),
-        ),
-        const SizedBox(height: 32),
-        Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Column(
-              children: List.generate(
-                8,
-                (i) => Container(
-                  width: 250,
-                  height: 44,
-                  margin: const EdgeInsets.only(bottom: 8),
-                  decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8)),
-                ),
+            Container(
+              width: 200,
+              height: 32,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(4),
               ),
             ),
-            const SizedBox(width: 32),
-            Expanded(
-              child: Container(
-                height: 480,
-                decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16)),
+            const SizedBox(height: 8),
+            Container(
+              width: 350,
+              height: 16,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(4),
               ),
+            ),
+            const SizedBox(height: 32),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Column(
+                  children: List.generate(
+                    8,
+                    (i) => Container(
+                      width: 250,
+                      height: 44,
+                      margin: const EdgeInsets.only(bottom: 8),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 32),
+                Expanded(
+                  child: Container(
+                    height: 480,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
-        ),
-      ],
-    )
+        )
         .animate(onPlay: (c) => c.repeat(reverse: true))
         .shimmer(duration: 1200.ms, color: const Color(0xFFF1F5F9))
         .fade(begin: 0.6, end: 1.0);
@@ -465,7 +559,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           const SizedBox(height: 16),
           const Text(
             'Failed to load settings configuration',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: AppColors.textPrimary,
+            ),
           ),
           const SizedBox(height: 8),
           const Text(
@@ -481,7 +579,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               backgroundColor: AppColors.primary,
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
             ),
           ),
         ],

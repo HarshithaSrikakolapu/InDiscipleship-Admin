@@ -2,15 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:intl/intl.dart';
-import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/responsive/responsive.dart';
 import '../application/dashboard_providers.dart';
 import '../data/models/dashboard_analytics_model.dart';
 import 'widgets/dashboard_charts.dart';
 import '../../notifications/presentation/widgets/recent_notifications_widget.dart';
-import '../../settings/application/settings_providers.dart';
-import '../../settings/domain/settings_model.dart';
 
 class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
@@ -18,7 +15,6 @@ class DashboardScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final analyticsAsync = ref.watch(dashboardAnalyticsProvider);
-    final settingsAsync = ref.watch(settingsStreamProvider);
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -68,7 +64,11 @@ class DashboardScreen extends ConsumerWidget {
 
             const Text(
               'Welcome back, Admin',
-              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+              style: TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+                color: AppColors.textPrimary,
+              ),
             ),
             const SizedBox(height: 8),
             const Text(
@@ -76,7 +76,7 @@ class DashboardScreen extends ConsumerWidget {
               style: TextStyle(fontSize: 16, color: AppColors.textSecondary),
             ),
             const SizedBox(height: 32),
-            
+
             analyticsAsync.when(
               data: (data) => _buildDashboardContent(context, data, ref),
               loading: () => _buildSkeleton(context),
@@ -88,9 +88,11 @@ class DashboardScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildDashboardContent(BuildContext context, DashboardAnalyticsModel data, WidgetRef ref) {
-    final settingsAsync = ref.watch(settingsStreamProvider);
-
+  Widget _buildDashboardContent(
+    BuildContext context,
+    DashboardAnalyticsModel data,
+    WidgetRef ref,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -106,123 +108,70 @@ class DashboardScreen extends ConsumerWidget {
         _buildCharts(context, data),
         const SizedBox(height: 32),
         _buildRecentActivity(context, data),
-      ]
+      ],
     ).animate().fadeIn(duration: 400.ms).slideY(begin: 0.05, end: 0);
   }
 
-  Widget _buildAdminSummaryCard(BuildContext context, SettingsModel settings) {
-    final enabledFlagsCount = settings.featureFlags.flags.values.where((v) => v).length;
-    final totalFlagsCount = settings.featureFlags.flags.length;
-
-    return Card(
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: const BorderSide(color: Color(0xFFE2E8F0)),
-      ),
-      color: Colors.white,
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: settings.maintenance.enabled
-                    ? AppColors.warning.withOpacity(0.1)
-                    : AppColors.success.withOpacity(0.1),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                settings.maintenance.enabled ? Icons.lock : Icons.lock_open,
-                color: settings.maintenance.enabled ? AppColors.warning : AppColors.success,
-                size: 24,
-              ),
-            ),
-            const SizedBox(width: 16),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'SYSTEM STATUS',
-                  style: TextStyle(color: AppColors.textSecondary, fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  settings.maintenance.enabled ? 'Under Maintenance' : 'Active & Live',
-                  style: TextStyle(
-                    color: settings.maintenance.enabled ? AppColors.warning : AppColors.success,
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(width: 32),
-            Container(width: 1, height: 40, color: const Color(0xFFE2E8F0)),
-            const SizedBox(width: 32),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'MINIMUM VERSION',
-                  style: TextStyle(color: AppColors.textSecondary, fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  'v${settings.appVersion.minimumVersion}',
-                  style: const TextStyle(color: AppColors.textPrimary, fontSize: 15, fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-            const SizedBox(width: 32),
-            Container(width: 1, height: 40, color: const Color(0xFFE2E8F0)),
-            const SizedBox(width: 32),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'FEATURE FLAGS',
-                  style: TextStyle(color: AppColors.textSecondary, fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  '$enabledFlagsCount / $totalFlagsCount Enabled',
-                  style: const TextStyle(color: AppColors.textPrimary, fontSize: 15, fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-            const Spacer(),
-            OutlinedButton.icon(
-              onPressed: () => context.go('/settings'),
-              icon: const Icon(Icons.settings, size: 16),
-              label: const Text('Configure Settings'),
-              style: OutlinedButton.styleFrom(
-                foregroundColor: AppColors.primary,
-                side: const BorderSide(color: AppColors.primary),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   Widget _buildKPIs(BuildContext context, DashboardAnalyticsModel data) {
-    final crossAxisCount = Responsive.isMobile(context) ? 1 : Responsive.isTablet(context) ? 2 : 4;
-    
+    final crossAxisCount = Responsive.isMobile(context)
+        ? 1
+        : Responsive.isTablet(context)
+        ? 2
+        : 4;
+
     final cards = [
-      _kpiCard('Total Users', data.totalUsers.toString(), Icons.people, AppColors.primary),
-      _kpiCard('Active Users Today', data.activeUsersToday.toString(), Icons.local_fire_department, AppColors.success),
-      _kpiCard('Total Lessons', data.totalLessons.toString(), Icons.menu_book, AppColors.warning),
-      _kpiCard('Published Lessons', data.publishedLessons.toString(), Icons.check_circle, AppColors.success),
-      
-      if (data.hasProgressData) _kpiCard('Completed Lessons Today', data.completedLessonsToday.toString(), Icons.task_alt, AppColors.primaryAccent),
-      if (data.hasProgressData) _kpiCard('Average Completion', '${data.averageCompletion.toStringAsFixed(1)}%', Icons.pie_chart, AppColors.primary),
-      if (data.hasProgressData) _kpiCard('Average Streak', data.averageStreak.toStringAsFixed(1), Icons.bolt, AppColors.warning),
-      _kpiCard('Total Mentors', data.totalMentors.toString(), Icons.school, const Color(0xFF7C3AED)),
+      _kpiCard(
+        'Total Users',
+        data.totalUsers.toString(),
+        Icons.people,
+        AppColors.primary,
+      ),
+      _kpiCard(
+        'Active Users Today',
+        data.activeUsersToday.toString(),
+        Icons.local_fire_department,
+        AppColors.success,
+      ),
+      _kpiCard(
+        'Total Lessons',
+        data.totalLessons.toString(),
+        Icons.menu_book,
+        AppColors.warning,
+      ),
+      _kpiCard(
+        'Published Lessons',
+        data.publishedLessons.toString(),
+        Icons.check_circle,
+        AppColors.success,
+      ),
+
+      if (data.hasProgressData)
+        _kpiCard(
+          'Completed Lessons Today',
+          data.completedLessonsToday.toString(),
+          Icons.task_alt,
+          AppColors.primaryAccent,
+        ),
+      if (data.hasProgressData)
+        _kpiCard(
+          'Average Completion',
+          '${data.averageCompletion.toStringAsFixed(1)}%',
+          Icons.pie_chart,
+          AppColors.primary,
+        ),
+      if (data.hasProgressData)
+        _kpiCard(
+          'Average Streak',
+          data.averageStreak.toStringAsFixed(1),
+          Icons.bolt,
+          AppColors.warning,
+        ),
+      _kpiCard(
+        'Total Mentors',
+        data.totalMentors.toString(),
+        Icons.school,
+        const Color(0xFF7C3AED),
+      ),
     ];
 
     return GridView(
@@ -256,14 +205,34 @@ class DashboardScreen extends ConsumerWidget {
               children: [
                 Container(
                   padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(color: color.withOpacity(0.1), borderRadius: BorderRadius.circular(8)),
+                  decoration: BoxDecoration(
+                    color: color.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                   child: Icon(icon, color: color, size: 20),
                 ),
                 const SizedBox(width: 12),
-                Expanded(child: Text(title, style: const TextStyle(color: AppColors.textSecondary, fontSize: 14, fontWeight: FontWeight.w600), overflow: TextOverflow.ellipsis)),
+                Expanded(
+                  child: Text(
+                    title,
+                    style: const TextStyle(
+                      color: AppColors.textSecondary,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
               ],
             ),
-            Text(value, style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
+            Text(
+              value,
+              style: const TextStyle(
+                fontSize: 32,
+                fontWeight: FontWeight.bold,
+                color: AppColors.textPrimary,
+              ),
+            ),
           ],
         ),
       ),
@@ -271,7 +240,11 @@ class DashboardScreen extends ConsumerWidget {
   }
 
   Widget _buildCharts(BuildContext context, DashboardAnalyticsModel data) {
-    final crossAxisCount = Responsive.isMobile(context) ? 1 : Responsive.isTablet(context) ? 1 : 2;
+    final crossAxisCount = Responsive.isMobile(context)
+        ? 1
+        : Responsive.isTablet(context)
+        ? 1
+        : 2;
 
     return GridView(
       shrinkWrap: true,
@@ -283,14 +256,44 @@ class DashboardScreen extends ConsumerWidget {
         mainAxisExtent: 400,
       ),
       children: [
-        _chartCard('User Registrations by Month', DashboardCharts.buildLineChart(data.monthlyRegistrations)),
-        _chartCard('Daily Active Users', DashboardCharts.buildBarChart(data.dailyActiveUsers)),
-        _chartCard('Lesson Completion Rate by Week', DashboardCharts.buildLineChart(data.lessonCompletionByWeek)),
-        _chartCard('User Growth', DashboardCharts.buildLineChart(data.monthlyRegistrations, isArea: true)),
-        _chartCard('Top Completed Lessons', DashboardCharts.buildHorizontalBar(data.topCompletedLessons)),
-        _chartCard('Geography Distribution', DashboardCharts.buildPieChart(data.geographyDistribution)),
-        _chartCard('Age Group Distribution', DashboardCharts.buildPieChart(data.ageGroupDistribution, isDoughnut: true)),
-        _chartCard('Language Distribution', DashboardCharts.buildPieChart(data.languageDistribution)),
+        _chartCard(
+          'User Registrations by Month',
+          DashboardCharts.buildLineChart(data.monthlyRegistrations),
+        ),
+        _chartCard(
+          'Daily Active Users',
+          DashboardCharts.buildBarChart(data.dailyActiveUsers),
+        ),
+        _chartCard(
+          'Lesson Completion Rate by Week',
+          DashboardCharts.buildLineChart(data.lessonCompletionByWeek),
+        ),
+        _chartCard(
+          'User Growth',
+          DashboardCharts.buildLineChart(
+            data.monthlyRegistrations,
+            isArea: true,
+          ),
+        ),
+        _chartCard(
+          'Top Completed Lessons',
+          DashboardCharts.buildHorizontalBar(data.topCompletedLessons),
+        ),
+        _chartCard(
+          'Geography Distribution',
+          DashboardCharts.buildPieChart(data.geographyDistribution),
+        ),
+        _chartCard(
+          'Age Group Distribution',
+          DashboardCharts.buildPieChart(
+            data.ageGroupDistribution,
+            isDoughnut: true,
+          ),
+        ),
+        _chartCard(
+          'Language Distribution',
+          DashboardCharts.buildPieChart(data.languageDistribution),
+        ),
       ],
     );
   }
@@ -298,14 +301,20 @@ class DashboardScreen extends ConsumerWidget {
   Widget _chartCard(String title, Widget child) {
     return Card(
       elevation: 0,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16), side: const BorderSide(color: Color(0xFFE2E8F0))),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: const BorderSide(color: Color(0xFFE2E8F0)),
+      ),
       color: Colors.white,
       child: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+            Text(
+              title,
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            ),
             const SizedBox(height: 32),
             Expanded(child: child),
           ],
@@ -314,7 +323,10 @@ class DashboardScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildRecentActivity(BuildContext context, DashboardAnalyticsModel data) {
+  Widget _buildRecentActivity(
+    BuildContext context,
+    DashboardAnalyticsModel data,
+  ) {
     if (Responsive.isDesktop(context)) {
       return Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -345,33 +357,74 @@ class DashboardScreen extends ConsumerWidget {
   }
 
   Widget _buildRecentUsersTable(DashboardAnalyticsModel data) {
-    return _listCard('Recent Users', data.recentUsers.map((u) {
-      final date = u['joinedDate'] != null ? DateFormat('MMM d, y').format(u['joinedDate'] as DateTime) : '';
-      return ListTile(
-        contentPadding: EdgeInsets.zero,
-        leading: CircleAvatar(backgroundColor: AppColors.primary.withOpacity(0.1), child: const Icon(Icons.person, color: AppColors.primary)),
-        title: Text(u['name'] ?? 'Unknown', style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
-        subtitle: Text('${u['email']}', style: const TextStyle(fontSize: 12)),
-        trailing: Text(date, style: const TextStyle(fontSize: 12, color: AppColors.textSecondary)),
-      );
-    }).toList());
+    return _listCard(
+      'Recent Users',
+      data.recentUsers.map((u) {
+        final date = u['joinedDate'] != null
+            ? DateFormat('MMM d, y').format(u['joinedDate'] as DateTime)
+            : '';
+        return ListTile(
+          contentPadding: EdgeInsets.zero,
+          leading: CircleAvatar(
+            backgroundColor: AppColors.primary.withValues(alpha: 0.1),
+            child: const Icon(Icons.person, color: AppColors.primary),
+          ),
+          title: Text(
+            u['name'] ?? 'Unknown',
+            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+          ),
+          subtitle: Text('${u['email']}', style: const TextStyle(fontSize: 12)),
+          trailing: Text(
+            date,
+            style: const TextStyle(
+              fontSize: 12,
+              color: AppColors.textSecondary,
+            ),
+          ),
+        );
+      }).toList(),
+    );
   }
 
   Widget _buildRecentLessonsTable(DashboardAnalyticsModel data) {
-    return _listCard('Recently Updated Lessons', data.recentlyUpdatedLessons.map((l) {
-      final date = l['updatedTime'] != null ? DateFormat('MMM d').format(l['updatedTime'] as DateTime) : '';
-      return ListTile(
-        contentPadding: EdgeInsets.zero,
-        leading: Container(
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(color: AppColors.warning.withOpacity(0.1), borderRadius: BorderRadius.circular(8)),
-          child: const Icon(Icons.menu_book, color: AppColors.warning, size: 20),
-        ),
-        title: Text(l['lesson'] ?? 'Unknown', style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
-        subtitle: Text('Week ${l['week']} Day ${l['day']} • By ${l['updatedBy']}', style: const TextStyle(fontSize: 12)),
-        trailing: Text(date, style: const TextStyle(fontSize: 12, color: AppColors.textSecondary)),
-      );
-    }).toList());
+    return _listCard(
+      'Recently Updated Lessons',
+      data.recentlyUpdatedLessons.map((l) {
+        final date = l['updatedTime'] != null
+            ? DateFormat('MMM d').format(l['updatedTime'] as DateTime)
+            : '';
+        return ListTile(
+          contentPadding: EdgeInsets.zero,
+          leading: Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: AppColors.warning.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: const Icon(
+              Icons.menu_book,
+              color: AppColors.warning,
+              size: 20,
+            ),
+          ),
+          title: Text(
+            l['lesson'] ?? 'Unknown',
+            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+          ),
+          subtitle: Text(
+            'Week ${l['week']} Day ${l['day']} • By ${l['updatedBy']}',
+            style: const TextStyle(fontSize: 12),
+          ),
+          trailing: Text(
+            date,
+            style: const TextStyle(
+              fontSize: 12,
+              color: AppColors.textSecondary,
+            ),
+          ),
+        );
+      }).toList(),
+    );
   }
 
   Widget _buildActivityTimeline(DashboardAnalyticsModel data) {
@@ -379,33 +432,56 @@ class DashboardScreen extends ConsumerWidget {
       return _listCard('Recent Activity', [
         const Padding(
           padding: EdgeInsets.all(24.0),
-          child: Text('No activity logs available', style: TextStyle(color: AppColors.textSecondary)),
-        )
+          child: Text(
+            'No activity logs available',
+            style: TextStyle(color: AppColors.textSecondary),
+          ),
+        ),
       ]);
     }
-    
-    return _listCard('Recent Activity', data.recentActivityTimeline.map((log) {
-      final date = log['createdAt'] != null ? DateFormat('MMM d, h:mm a').format(log['createdAt'].toDate()) : '';
-      return ListTile(
-        contentPadding: EdgeInsets.zero,
-        leading: const Icon(Icons.circle, size: 12, color: AppColors.primary),
-        title: Text(log['description'] ?? 'Activity occurred', style: const TextStyle(fontSize: 14)),
-        subtitle: Text(date, style: const TextStyle(fontSize: 12, color: AppColors.textSecondary)),
-      );
-    }).toList());
+
+    return _listCard(
+      'Recent Activity',
+      data.recentActivityTimeline.map((log) {
+        final date = log['createdAt'] != null
+            ? DateFormat('MMM d, h:mm a').format(log['createdAt'].toDate())
+            : '';
+        return ListTile(
+          contentPadding: EdgeInsets.zero,
+          leading: const Icon(Icons.circle, size: 12, color: AppColors.primary),
+          title: Text(
+            log['description'] ?? 'Activity occurred',
+            style: const TextStyle(fontSize: 14),
+          ),
+          subtitle: Text(
+            date,
+            style: const TextStyle(
+              fontSize: 12,
+              color: AppColors.textSecondary,
+            ),
+          ),
+        );
+      }).toList(),
+    );
   }
 
   Widget _listCard(String title, List<Widget> children) {
     return Card(
       elevation: 0,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16), side: const BorderSide(color: Color(0xFFE2E8F0))),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: const BorderSide(color: Color(0xFFE2E8F0)),
+      ),
       color: Colors.white,
       child: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+            Text(
+              title,
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            ),
             const SizedBox(height: 16),
             ...children,
           ],
@@ -415,7 +491,11 @@ class DashboardScreen extends ConsumerWidget {
   }
 
   Widget _buildSkeleton(BuildContext context) {
-    final crossAxisCount = Responsive.isMobile(context) ? 1 : Responsive.isTablet(context) ? 2 : 4;
+    final crossAxisCount = Responsive.isMobile(context)
+        ? 1
+        : Responsive.isTablet(context)
+        ? 2
+        : 4;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -428,12 +508,22 @@ class DashboardScreen extends ConsumerWidget {
             mainAxisSpacing: 24,
             mainAxisExtent: 140,
           ),
-          children: List.generate(8, (i) => Card(
-            elevation: 0,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16), side: const BorderSide(color: Color(0xFFE2E8F0))),
-            color: Colors.white,
-            child: const SizedBox(),
-          ).animate(onPlay: (c) => c.repeat(reverse: true)).shimmer(duration: 1200.ms, color: Colors.white24).fade(begin: 0.5, end: 1.0)),
+          children: List.generate(
+            8,
+            (i) =>
+                Card(
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        side: const BorderSide(color: Color(0xFFE2E8F0)),
+                      ),
+                      color: Colors.white,
+                      child: const SizedBox(),
+                    )
+                    .animate(onPlay: (c) => c.repeat(reverse: true))
+                    .shimmer(duration: 1200.ms, color: Colors.white24)
+                    .fade(begin: 0.5, end: 1.0),
+          ),
         ),
       ],
     );
@@ -446,11 +536,17 @@ class DashboardScreen extends ConsumerWidget {
         children: [
           const Icon(Icons.error_outline, size: 48, color: AppColors.danger),
           const SizedBox(height: 16),
-          const Text('Failed to load dashboard data', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          const Text(
+            'Failed to load dashboard data',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
           const SizedBox(height: 16),
           ElevatedButton(
             onPressed: () => ref.invalidate(dashboardAnalyticsProvider),
-            style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary, foregroundColor: Colors.white),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primary,
+              foregroundColor: Colors.white,
+            ),
             child: const Text('Retry'),
           ),
         ],

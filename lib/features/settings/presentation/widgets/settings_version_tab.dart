@@ -9,10 +9,7 @@ import '../../../auth/data/auth_repository.dart';
 class SettingsVersionTab extends ConsumerStatefulWidget {
   final AppVersionSettings settings;
 
-  const SettingsVersionTab({
-    super.key,
-    required this.settings,
-  });
+  const SettingsVersionTab({super.key, required this.settings});
 
   @override
   ConsumerState<SettingsVersionTab> createState() => _SettingsVersionTabState();
@@ -30,10 +27,18 @@ class _SettingsVersionTabState extends ConsumerState<SettingsVersionTab> {
   @override
   void initState() {
     super.initState();
-    _androidVersionController = TextEditingController(text: widget.settings.androidVersion);
-    _iosVersionController = TextEditingController(text: widget.settings.iosVersion);
-    _minimumVersionController = TextEditingController(text: widget.settings.minimumVersion);
-    _notesController = TextEditingController(text: widget.settings.releaseNotes);
+    _androidVersionController = TextEditingController(
+      text: widget.settings.androidVersion,
+    );
+    _iosVersionController = TextEditingController(
+      text: widget.settings.iosVersion,
+    );
+    _minimumVersionController = TextEditingController(
+      text: widget.settings.minimumVersion,
+    );
+    _notesController = TextEditingController(
+      text: widget.settings.releaseNotes,
+    );
     _forceUpdate = widget.settings.forceUpdate;
     _recommendedUpdate = widget.settings.recommendedUpdate;
   }
@@ -73,8 +78,9 @@ class _SettingsVersionTabState extends ConsumerState<SettingsVersionTab> {
       final userId = user?.email ?? user?.uid ?? 'unknown';
 
       // Detect if versions changed to update releaseDate
-      final isVersionChanged = 
-          _androidVersionController.text.trim() != widget.settings.androidVersion ||
+      final isVersionChanged =
+          _androidVersionController.text.trim() !=
+              widget.settings.androidVersion ||
           _iosVersionController.text.trim() != widget.settings.iosVersion;
 
       final updated = AppVersionSettings(
@@ -82,7 +88,9 @@ class _SettingsVersionTabState extends ConsumerState<SettingsVersionTab> {
         iosVersion: _iosVersionController.text.trim(),
         minimumVersion: _minimumVersionController.text.trim(),
         releaseNotes: _notesController.text.trim(),
-        releaseDate: isVersionChanged ? DateTime.now() : widget.settings.releaseDate,
+        releaseDate: isVersionChanged
+            ? DateTime.now()
+            : widget.settings.releaseDate,
         forceUpdate: _forceUpdate,
         recommendedUpdate: _recommendedUpdate,
         updatedAt: DateTime.now(),
@@ -137,7 +145,11 @@ class _SettingsVersionTabState extends ConsumerState<SettingsVersionTab> {
                 children: [
                   const Text(
                     'Active Target Build Versions',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textPrimary,
+                    ),
                   ),
                   const SizedBox(height: 24),
                   Row(
@@ -169,7 +181,10 @@ class _SettingsVersionTabState extends ConsumerState<SettingsVersionTab> {
                       const SizedBox(width: 24),
                       Expanded(
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 16,
+                          ),
                           decoration: BoxDecoration(
                             color: AppColors.background,
                             border: Border.all(color: AppColors.border),
@@ -178,11 +193,24 @@ class _SettingsVersionTabState extends ConsumerState<SettingsVersionTab> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text('Latest Release Date', style: TextStyle(color: AppColors.textSecondary, fontSize: 12, fontWeight: FontWeight.w600)),
+                              const Text(
+                                'Latest Release Date',
+                                style: TextStyle(
+                                  color: AppColors.textSecondary,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
                               const SizedBox(height: 4),
                               Text(
-                                DateFormat('MMMM d, y - h:mm a').format(widget.settings.releaseDate),
-                                style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+                                DateFormat(
+                                  'MMMM d, y - h:mm a',
+                                ).format(widget.settings.releaseDate),
+                                style: const TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.textPrimary,
+                                ),
                               ),
                             ],
                           ),
@@ -209,14 +237,23 @@ class _SettingsVersionTabState extends ConsumerState<SettingsVersionTab> {
                 children: [
                   const Text(
                     'Version Control Behavior',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textPrimary,
+                    ),
                   ),
                   const SizedBox(height: 16),
                   SwitchListTile(
-                    title: const Text('Force Update Required', style: TextStyle(fontWeight: FontWeight.w600)),
-                    subtitle: const Text('If active, mobile app users running version below minimum will be completely blocked from using the app.'),
+                    title: const Text(
+                      'Force Update Required',
+                      style: TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                    subtitle: const Text(
+                      'If active, mobile app users running version below minimum will be completely blocked from using the app.',
+                    ),
                     value: _forceUpdate,
-                    activeColor: AppColors.danger,
+                    activeThumbColor: AppColors.danger,
                     onChanged: (val) {
                       setState(() {
                         _forceUpdate = val;
@@ -228,10 +265,15 @@ class _SettingsVersionTabState extends ConsumerState<SettingsVersionTab> {
                   ),
                   const Divider(color: AppColors.border),
                   SwitchListTile(
-                    title: const Text('Recommended Update Available', style: TextStyle(fontWeight: FontWeight.w600)),
-                    subtitle: const Text('If active, mobile app users running version below latest will see a dismissible update dialog suggestion.'),
+                    title: const Text(
+                      'Recommended Update Available',
+                      style: TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                    subtitle: const Text(
+                      'If active, mobile app users running version below latest will see a dismissible update dialog suggestion.',
+                    ),
                     value: _recommendedUpdate,
-                    activeColor: AppColors.primary,
+                    activeThumbColor: AppColors.primary,
                     onChanged: (val) {
                       setState(() {
                         _recommendedUpdate = val;
@@ -260,20 +302,35 @@ class _SettingsVersionTabState extends ConsumerState<SettingsVersionTab> {
                 children: [
                   const Text(
                     'Release Notes',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textPrimary,
+                    ),
                   ),
                   const SizedBox(height: 24),
                   TextFormField(
                     controller: _notesController,
                     maxLines: 6,
-                    style: const TextStyle(color: AppColors.textPrimary, fontSize: 15),
+                    style: const TextStyle(
+                      color: AppColors.textPrimary,
+                      fontSize: 15,
+                    ),
                     decoration: InputDecoration(
                       labelText: 'Latest Release Notes',
-                      labelStyle: const TextStyle(color: AppColors.textSecondary, fontSize: 14),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                      labelStyle: const TextStyle(
+                        color: AppColors.textSecondary,
+                        fontSize: 14,
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
-                        borderSide: const BorderSide(color: AppColors.primary, width: 2),
+                        borderSide: const BorderSide(
+                          color: AppColors.primary,
+                          width: 2,
+                        ),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
@@ -294,7 +351,10 @@ class _SettingsVersionTabState extends ConsumerState<SettingsVersionTab> {
               if (widget.settings.updatedBy.isNotEmpty)
                 Text(
                   'Last updated by ${widget.settings.updatedBy}',
-                  style: const TextStyle(color: AppColors.textSecondary, fontSize: 13),
+                  style: const TextStyle(
+                    color: AppColors.textSecondary,
+                    fontSize: 13,
+                  ),
                 )
               else
                 const SizedBox.shrink(),
@@ -304,15 +364,23 @@ class _SettingsVersionTabState extends ConsumerState<SettingsVersionTab> {
                     ? const SizedBox(
                         width: 16,
                         height: 16,
-                        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
                       )
                     : const Icon(Icons.save),
                 label: const Text('Save App Version Settings'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary,
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 16,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                 ),
               ),
             ],
@@ -331,12 +399,17 @@ class _SettingsVersionTabState extends ConsumerState<SettingsVersionTab> {
       style: const TextStyle(color: AppColors.textPrimary, fontSize: 15),
       validator: (v) {
         if (v == null || v.trim().isEmpty) return 'Version number is required';
-        if (!_isValidVersion(v)) return 'Invalid format. Use x.y.z (e.g., 1.0.4)';
+        if (!_isValidVersion(v)) {
+          return 'Invalid format. Use x.y.z (e.g., 1.0.4)';
+        }
         return null;
       },
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: const TextStyle(color: AppColors.textSecondary, fontSize: 14),
+        labelStyle: const TextStyle(
+          color: AppColors.textSecondary,
+          fontSize: 14,
+        ),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
@@ -348,7 +421,10 @@ class _SettingsVersionTabState extends ConsumerState<SettingsVersionTab> {
         ),
         filled: true,
         fillColor: Colors.white,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 16,
+        ),
       ),
     );
   }

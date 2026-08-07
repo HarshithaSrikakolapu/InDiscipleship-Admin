@@ -46,10 +46,7 @@ class RegistrationTrend {
   final DateTime date;
   final int newUsers;
 
-  RegistrationTrend({
-    required this.date,
-    required this.newUsers,
-  });
+  RegistrationTrend({required this.date, required this.newUsers});
 }
 
 class LessonEngagementSummary {
@@ -72,8 +69,5 @@ class ActiveWeekSummary {
   final int weekNumber;
   final int activeUsersCount;
 
-  ActiveWeekSummary({
-    required this.weekNumber,
-    required this.activeUsersCount,
-  });
+  ActiveWeekSummary({required this.weekNumber, required this.activeUsersCount});
 }

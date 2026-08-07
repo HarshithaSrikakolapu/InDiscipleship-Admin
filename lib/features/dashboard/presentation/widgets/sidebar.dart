@@ -7,10 +7,7 @@ import '../../../auth/data/auth_repository.dart';
 class Sidebar extends ConsumerWidget {
   final StatefulNavigationShell navigationShell;
 
-  const Sidebar({
-    super.key,
-    required this.navigationShell,
-  });
+  const Sidebar({super.key, required this.navigationShell});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -47,7 +44,8 @@ class Sidebar extends ConsumerWidget {
                 _ExpandableSidebarItem(
                   icon: Icons.bar_chart,
                   label: 'Reports',
-                  isExpanded: navigationShell.currentIndex == 3 &&
+                  isExpanded:
+                      navigationShell.currentIndex == 3 &&
                       GoRouterState.of(context).uri.path != '/reports/overview',
                   onExpand: () {
                     if (navigationShell.currentIndex != 3) {
@@ -147,8 +145,10 @@ class Sidebar extends ConsumerWidget {
                 _SidebarItem(
                   icon: Icons.settings,
                   label: 'Settings',
-                  isSelected: navigationShell.currentIndex == 7 &&
-                      GoRouterState.of(context).uri.queryParameters['tab'] != 'profile',
+                  isSelected:
+                      navigationShell.currentIndex == 7 &&
+                      GoRouterState.of(context).uri.queryParameters['tab'] !=
+                          'profile',
                   onTap: () {
                     if (navigationShell.currentIndex != 7) _goBranch(7);
                     GoRouter.of(context).go('/settings?tab=general');
@@ -157,8 +157,10 @@ class Sidebar extends ConsumerWidget {
                 _SidebarItem(
                   icon: Icons.person,
                   label: 'Profile',
-                  isSelected: navigationShell.currentIndex == 7 &&
-                      GoRouterState.of(context).uri.queryParameters['tab'] == 'profile',
+                  isSelected:
+                      navigationShell.currentIndex == 7 &&
+                      GoRouterState.of(context).uri.queryParameters['tab'] ==
+                          'profile',
                   onTap: () {
                     if (navigationShell.currentIndex != 7) _goBranch(7);
                     GoRouter.of(context).go('/settings?tab=profile');
@@ -261,14 +263,19 @@ class _SidebarItem extends StatelessWidget {
                   label,
                   style: TextStyle(
                     color: isSelected ? Colors.white : Colors.white70,
-                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                    fontWeight: isSelected
+                        ? FontWeight.w600
+                        : FontWeight.normal,
                     fontSize: 15,
                   ),
                 ),
               ),
               if (badgeCount != null)
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 2,
+                  ),
                   decoration: BoxDecoration(
                     color: isSelected ? AppColors.primary : Colors.white24,
                     borderRadius: BorderRadius.circular(12),
@@ -319,9 +326,7 @@ class _ExpandableSidebarItem extends StatelessWidget {
           Container(
             color: AppColors.sidebarActive.withValues(alpha: 0.3),
             padding: const EdgeInsets.only(left: 16),
-            child: Column(
-              children: children,
-            ),
+            child: Column(children: children),
           ),
       ],
     );
@@ -332,10 +337,7 @@ class _SidebarSubItem extends StatelessWidget {
   final String label;
   final VoidCallback onTap;
 
-  const _SidebarSubItem({
-    required this.label,
-    required this.onTap,
-  });
+  const _SidebarSubItem({required this.label, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -349,10 +351,7 @@ class _SidebarSubItem extends StatelessWidget {
           width: double.infinity,
           child: Text(
             label,
-            style: const TextStyle(
-              color: Colors.white70,
-              fontSize: 14,
-            ),
+            style: const TextStyle(color: Colors.white70, fontSize: 14),
           ),
         ),
       ),

@@ -9,7 +9,8 @@ class NotificationController extends AsyncNotifier<void> {
   @override
   FutureOr<void> build() {}
 
-  NotificationRepository get _repository => ref.read(notificationRepositoryProvider);
+  NotificationRepository get _repository =>
+      ref.read(notificationRepositoryProvider);
 
   Future<void> saveDraft(NotificationModel draft) async {
     state = const AsyncLoading();
@@ -64,7 +65,8 @@ class NotificationController extends AsyncNotifier<void> {
     state = const AsyncLoading();
     try {
       final notification = await _repository.getNotificationById(id);
-      if (notification != null && notification.status == NotificationStatus.scheduled) {
+      if (notification != null &&
+          notification.status == NotificationStatus.scheduled) {
         final canceled = notification.copyWith(
           status: NotificationStatus.draft,
           updatedAt: DateTime.now(),
@@ -77,7 +79,10 @@ class NotificationController extends AsyncNotifier<void> {
     }
   }
 
-  Future<void> duplicateNotification(String originalId, String createdBy) async {
+  Future<void> duplicateNotification(
+    String originalId,
+    String createdBy,
+  ) async {
     state = const AsyncLoading();
     try {
       final original = await _repository.getNotificationById(originalId);

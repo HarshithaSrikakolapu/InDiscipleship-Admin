@@ -7,13 +7,11 @@ import '../../application/settings_providers.dart';
 class SettingsLanguagesTab extends ConsumerStatefulWidget {
   final LanguagesSettings settings;
 
-  const SettingsLanguagesTab({
-    super.key,
-    required this.settings,
-  });
+  const SettingsLanguagesTab({super.key, required this.settings});
 
   @override
-  ConsumerState<SettingsLanguagesTab> createState() => _SettingsLanguagesTabState();
+  ConsumerState<SettingsLanguagesTab> createState() =>
+      _SettingsLanguagesTabState();
 }
 
 class _SettingsLanguagesTabState extends ConsumerState<SettingsLanguagesTab> {
@@ -53,7 +51,13 @@ class _SettingsLanguagesTabState extends ConsumerState<SettingsLanguagesTab> {
     // Validation: Check if the selected default language is enabled
     final defaultLanguage = _languages.firstWhere(
       (l) => l.code == _defaultLanguageCode,
-      orElse: () => const SupportedLanguage(name: '', code: '', enabled: false, rtl: false, displayOrder: 0),
+      orElse: () => const SupportedLanguage(
+        name: '',
+        code: '',
+        enabled: false,
+        rtl: false,
+        displayOrder: 0,
+      ),
     );
 
     if (defaultLanguage.code.isEmpty || !defaultLanguage.enabled) {
@@ -91,17 +95,16 @@ class _SettingsLanguagesTabState extends ConsumerState<SettingsLanguagesTab> {
 
   void _showError(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: AppColors.danger,
-      ),
+      SnackBar(content: Text(message), backgroundColor: AppColors.danger),
     );
   }
 
   void _addNewLanguageDialog() {
     final nameController = TextEditingController();
     final codeController = TextEditingController();
-    final orderController = TextEditingController(text: '${_languages.length + 1}');
+    final orderController = TextEditingController(
+      text: '${_languages.length + 1}',
+    );
     bool isEnabled = true;
     bool isRtl = false;
 
@@ -111,26 +114,37 @@ class _SettingsLanguagesTabState extends ConsumerState<SettingsLanguagesTab> {
         return StatefulBuilder(
           builder: (context, setDialogState) {
             return AlertDialog(
-              title: const Text('Add Supported Language', style: TextStyle(fontWeight: FontWeight.bold)),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              title: const Text(
+                'Add Supported Language',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
               content: SingleChildScrollView(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     TextField(
                       controller: nameController,
-                      decoration: const InputDecoration(labelText: 'Language Name (e.g. Arabic)'),
+                      decoration: const InputDecoration(
+                        labelText: 'Language Name (e.g. Arabic)',
+                      ),
                     ),
                     const SizedBox(height: 16),
                     TextField(
                       controller: codeController,
-                      decoration: const InputDecoration(labelText: 'Language Code (e.g. ar)'),
+                      decoration: const InputDecoration(
+                        labelText: 'Language Code (e.g. ar)',
+                      ),
                     ),
                     const SizedBox(height: 16),
                     TextField(
                       controller: orderController,
                       keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(labelText: 'Display Order'),
+                      decoration: const InputDecoration(
+                        labelText: 'Display Order',
+                      ),
                     ),
                     const SizedBox(height: 16),
                     SwitchListTile(
@@ -157,7 +171,9 @@ class _SettingsLanguagesTabState extends ConsumerState<SettingsLanguagesTab> {
                   onPressed: () {
                     final name = nameController.text.trim();
                     final code = codeController.text.trim().toLowerCase();
-                    final order = int.tryParse(orderController.text) ?? (_languages.length + 1);
+                    final order =
+                        int.tryParse(orderController.text) ??
+                        (_languages.length + 1);
 
                     if (name.isEmpty || code.isEmpty) {
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -168,25 +184,34 @@ class _SettingsLanguagesTabState extends ConsumerState<SettingsLanguagesTab> {
 
                     if (_languages.any((l) => l.code == code)) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Language code already exists')),
+                        const SnackBar(
+                          content: Text('Language code already exists'),
+                        ),
                       );
                       return;
                     }
 
                     setState(() {
-                      _languages.add(SupportedLanguage(
-                        name: name,
-                        code: code,
-                        enabled: isEnabled,
-                        rtl: isRtl,
-                        displayOrder: order,
-                      ));
-                      _languages.sort((a, b) => a.displayOrder.compareTo(b.displayOrder));
+                      _languages.add(
+                        SupportedLanguage(
+                          name: name,
+                          code: code,
+                          enabled: isEnabled,
+                          rtl: isRtl,
+                          displayOrder: order,
+                        ),
+                      );
+                      _languages.sort(
+                        (a, b) => a.displayOrder.compareTo(b.displayOrder),
+                      );
                     });
 
                     Navigator.pop(context);
                   },
-                  style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary, foregroundColor: Colors.white),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    foregroundColor: Colors.white,
+                  ),
                   child: const Text('Add'),
                 ),
               ],
@@ -221,31 +246,51 @@ class _SettingsLanguagesTabState extends ConsumerState<SettingsLanguagesTab> {
               children: [
                 const Text(
                   'Default Language',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
+                  ),
                 ),
                 const SizedBox(height: 8),
                 const Text(
                   'Choose the fallback language for users when their system language is unsupported.',
-                  style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
+                  style: TextStyle(
+                    color: AppColors.textSecondary,
+                    fontSize: 14,
+                  ),
                 ),
                 const SizedBox(height: 24),
                 SizedBox(
                   width: 320,
                   child: DropdownButtonFormField<String>(
-                    value: _defaultLanguageCode.isNotEmpty &&
-                            _languages.any((l) => l.code == _defaultLanguageCode)
+                    initialValue:
+                        _defaultLanguageCode.isNotEmpty &&
+                            _languages.any(
+                              (l) => l.code == _defaultLanguageCode,
+                            )
                         ? _defaultLanguageCode
                         : null,
                     hint: const Text('Select default language'),
-                    style: const TextStyle(color: AppColors.textPrimary, fontSize: 15),
+                    style: const TextStyle(
+                      color: AppColors.textPrimary,
+                      fontSize: 15,
+                    ),
                     decoration: InputDecoration(
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
                     ),
                     items: enabledLanguages.map((lang) {
                       return DropdownMenuItem<String>(
                         value: lang.code,
-                        child: Text('${lang.name} (${lang.code.toUpperCase()})'),
+                        child: Text(
+                          '${lang.name} (${lang.code.toUpperCase()})',
+                        ),
                       );
                     }).toList(),
                     onChanged: (val) {
@@ -255,7 +300,8 @@ class _SettingsLanguagesTabState extends ConsumerState<SettingsLanguagesTab> {
                         });
                       }
                     },
-                    validator: (v) => v == null ? 'Default Language is required' : null,
+                    validator: (v) =>
+                        v == null ? 'Default Language is required' : null,
                   ),
                 ),
               ],
@@ -280,7 +326,11 @@ class _SettingsLanguagesTabState extends ConsumerState<SettingsLanguagesTab> {
                   children: [
                     const Text(
                       'Supported Languages',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textPrimary,
+                      ),
                     ),
                     ElevatedButton.icon(
                       onPressed: _addNewLanguageDialog,
@@ -290,7 +340,9 @@ class _SettingsLanguagesTabState extends ConsumerState<SettingsLanguagesTab> {
                         backgroundColor: Colors.white,
                         foregroundColor: AppColors.primary,
                         side: const BorderSide(color: AppColors.primary),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                       ),
                     ),
                   ],
@@ -300,7 +352,8 @@ class _SettingsLanguagesTabState extends ConsumerState<SettingsLanguagesTab> {
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   itemCount: _languages.length,
-                  separatorBuilder: (c, i) => const Divider(color: AppColors.border, height: 1),
+                  separatorBuilder: (c, i) =>
+                      const Divider(color: AppColors.border, height: 1),
                   itemBuilder: (context, index) {
                     final lang = _languages[index];
                     return Padding(
@@ -311,20 +364,32 @@ class _SettingsLanguagesTabState extends ConsumerState<SettingsLanguagesTab> {
                             flex: 3,
                             child: Text(
                               lang.name,
-                              style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.textPrimary, fontSize: 15),
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.textPrimary,
+                                fontSize: 15,
+                              ),
                             ),
                           ),
                           Expanded(
                             flex: 2,
                             child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
                               decoration: BoxDecoration(
                                 color: AppColors.background,
                                 borderRadius: BorderRadius.circular(4),
                               ),
                               child: Text(
                                 lang.code.toUpperCase(),
-                                style: const TextStyle(fontFamily: 'Courier', fontWeight: FontWeight.bold, color: AppColors.textSecondary, fontSize: 13),
+                                style: const TextStyle(
+                                  fontFamily: 'Courier',
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.textSecondary,
+                                  fontSize: 13,
+                                ),
                               ),
                             ),
                           ),
@@ -332,14 +397,22 @@ class _SettingsLanguagesTabState extends ConsumerState<SettingsLanguagesTab> {
                             flex: 2,
                             child: Row(
                               children: [
-                                const Text('RTL ', style: TextStyle(fontSize: 13, color: AppColors.textSecondary)),
+                                const Text(
+                                  'RTL ',
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    color: AppColors.textSecondary,
+                                  ),
+                                ),
                                 Checkbox(
                                   value: lang.rtl,
                                   activeColor: AppColors.primary,
                                   onChanged: (val) {
                                     if (val != null) {
                                       setState(() {
-                                        _languages[index] = lang.copyWith(rtl: val);
+                                        _languages[index] = lang.copyWith(
+                                          rtl: val,
+                                        );
                                       });
                                     }
                                   },
@@ -351,7 +424,13 @@ class _SettingsLanguagesTabState extends ConsumerState<SettingsLanguagesTab> {
                             flex: 2,
                             child: Row(
                               children: [
-                                const Text('Order ', style: TextStyle(fontSize: 13, color: AppColors.textSecondary)),
+                                const Text(
+                                  'Order ',
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    color: AppColors.textSecondary,
+                                  ),
+                                ),
                                 SizedBox(
                                   width: 50,
                                   height: 35,
@@ -359,13 +438,20 @@ class _SettingsLanguagesTabState extends ConsumerState<SettingsLanguagesTab> {
                                     initialValue: '${lang.displayOrder}',
                                     keyboardType: TextInputType.number,
                                     decoration: const InputDecoration(
-                                      contentPadding: EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                                      contentPadding: EdgeInsets.symmetric(
+                                        horizontal: 6,
+                                        vertical: 4,
+                                      ),
                                       border: OutlineInputBorder(),
                                     ),
                                     onChanged: (val) {
-                                      final order = int.tryParse(val) ?? lang.displayOrder;
+                                      final order =
+                                          int.tryParse(val) ??
+                                          lang.displayOrder;
                                       setState(() {
-                                        _languages[index] = lang.copyWith(displayOrder: order);
+                                        _languages[index] = lang.copyWith(
+                                          displayOrder: order,
+                                        );
                                       });
                                     },
                                   ),
@@ -375,7 +461,7 @@ class _SettingsLanguagesTabState extends ConsumerState<SettingsLanguagesTab> {
                           ),
                           Switch(
                             value: lang.enabled,
-                            activeColor: AppColors.success,
+                            activeThumbColor: AppColors.success,
                             onChanged: (val) {
                               setState(() {
                                 _languages[index] = lang.copyWith(enabled: val);
@@ -405,15 +491,23 @@ class _SettingsLanguagesTabState extends ConsumerState<SettingsLanguagesTab> {
                   ? const SizedBox(
                       width: 16,
                       height: 16,
-                      child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
                     )
                   : const Icon(Icons.save),
               label: const Text('Save Languages'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary,
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 16,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
               ),
             ),
           ],

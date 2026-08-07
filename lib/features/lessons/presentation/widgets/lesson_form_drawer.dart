@@ -40,7 +40,9 @@ class _LessonFormDrawerState extends ConsumerState<LessonFormDrawer> {
     _titleController = TextEditingController(text: lesson?.lessonTitle ?? '');
     _topicController = TextEditingController(text: lesson?.topic ?? '');
     _verseController = TextEditingController(text: lesson?.bibleVerse ?? '');
-    _minutesController = TextEditingController(text: (lesson?.estimatedMinutes ?? 12).toString());
+    _minutesController = TextEditingController(
+      text: (lesson?.estimatedMinutes ?? 12).toString(),
+    );
 
     _connectController = _initQuillController(lesson?.connect);
     _discoverController = _initQuillController(lesson?.discover);
@@ -52,20 +54,28 @@ class _LessonFormDrawerState extends ConsumerState<LessonFormDrawer> {
     if (data == null || data.isEmpty) {
       return quill.QuillController.basic();
     }
-    
+
     // Check if it's stored as Quill JSON Delta in the first element
-    if (data.length == 1 && data.first.startsWith('[') && data.first.endsWith(']')) {
+    if (data.length == 1 &&
+        data.first.startsWith('[') &&
+        data.first.endsWith(']')) {
       try {
         final doc = quill.Document.fromJson(jsonDecode(data.first));
-        return quill.QuillController(document: doc, selection: const TextSelection.collapsed(offset: 0));
+        return quill.QuillController(
+          document: doc,
+          selection: const TextSelection.collapsed(offset: 0),
+        );
       } catch (e) {
         // Fallback to plain text
       }
     }
-    
+
     // Fallback to plain text
     final doc = quill.Document()..insert(0, data.join('\n'));
-    return quill.QuillController(document: doc, selection: const TextSelection.collapsed(offset: 0));
+    return quill.QuillController(
+      document: doc,
+      selection: const TextSelection.collapsed(offset: 0),
+    );
   }
 
   List<String> _getQuillData(quill.QuillController controller) {
@@ -104,7 +114,7 @@ class _LessonFormDrawerState extends ConsumerState<LessonFormDrawer> {
       );
 
       final controller = ref.read(lessonControllerProvider.notifier);
-      
+
       if (widget.lesson == null) {
         await controller.createLesson(newLesson);
       } else {
@@ -113,10 +123,17 @@ class _LessonFormDrawerState extends ConsumerState<LessonFormDrawer> {
 
       final state = ref.read(lessonControllerProvider);
       if (state.error == null && mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Lesson saved successfully!')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Lesson saved successfully!')),
+        );
         widget.onClose();
       } else if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.error ?? 'Error saving lesson'), backgroundColor: AppColors.danger));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(state.error ?? 'Error saving lesson'),
+            backgroundColor: AppColors.danger,
+          ),
+        );
       }
     }
   }
@@ -128,7 +145,10 @@ class _LessonFormDrawerState extends ConsumerState<LessonFormDrawer> {
         title: const Text('Delete Lesson'),
         content: const Text('This action cannot be undone.'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel'),
+          ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: AppColors.danger),
             onPressed: () async {
@@ -136,7 +156,9 @@ class _LessonFormDrawerState extends ConsumerState<LessonFormDrawer> {
               final controller = ref.read(lessonControllerProvider.notifier);
               await controller.deleteLesson(widget.lesson!.lessonId);
               if (mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Lesson deleted')));
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(const SnackBar(content: Text('Lesson deleted')));
                 widget.onClose();
               }
             },
@@ -151,7 +173,10 @@ class _LessonFormDrawerState extends ConsumerState<LessonFormDrawer> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+        Text(
+          title,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+        ),
         const SizedBox(height: 8),
         Container(
           decoration: BoxDecoration(
@@ -205,9 +230,14 @@ class _LessonFormDrawerState extends ConsumerState<LessonFormDrawer> {
               children: [
                 Text(
                   isEditing ? 'Edit Lesson' : 'Create Lesson',
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
                 ),
-                IconButton(icon: const Icon(Icons.close), onPressed: widget.onClose),
+                IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: widget.onClose,
+                ),
               ],
             ),
           ),
@@ -219,25 +249,58 @@ class _LessonFormDrawerState extends ConsumerState<LessonFormDrawer> {
                     child: ListView(
                       padding: const EdgeInsets.all(24),
                       children: [
-                        const Text('Lesson Information', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: AppColors.primary)),
+                        const Text(
+                          'Lesson Information',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                            color: AppColors.primary,
+                          ),
+                        ),
                         const SizedBox(height: 16),
                         Row(
                           children: [
                             Expanded(
                               child: DropdownButtonFormField<int>(
-                                decoration: const InputDecoration(labelText: 'Week', border: OutlineInputBorder(), filled: true, fillColor: Colors.white),
-                                value: _week,
-                                items: List.generate(12, (index) => DropdownMenuItem(value: index + 1, child: Text('Week ${index + 1}'))),
-                                onChanged: isEditing ? null : (value) => setState(() => _week = value!),
+                                decoration: const InputDecoration(
+                                  labelText: 'Week',
+                                  border: OutlineInputBorder(),
+                                  filled: true,
+                                  fillColor: Colors.white,
+                                ),
+                                initialValue: _week,
+                                items: List.generate(
+                                  12,
+                                  (index) => DropdownMenuItem(
+                                    value: index + 1,
+                                    child: Text('Week ${index + 1}'),
+                                  ),
+                                ),
+                                onChanged: isEditing
+                                    ? null
+                                    : (value) => setState(() => _week = value!),
                               ),
                             ),
                             const SizedBox(width: 16),
                             Expanded(
                               child: DropdownButtonFormField<int>(
-                                decoration: const InputDecoration(labelText: 'Day', border: OutlineInputBorder(), filled: true, fillColor: Colors.white),
-                                value: _day,
-                                items: List.generate(5, (index) => DropdownMenuItem(value: index + 1, child: Text('Day ${index + 1}'))),
-                                onChanged: isEditing ? null : (value) => setState(() => _day = value!),
+                                decoration: const InputDecoration(
+                                  labelText: 'Day',
+                                  border: OutlineInputBorder(),
+                                  filled: true,
+                                  fillColor: Colors.white,
+                                ),
+                                initialValue: _day,
+                                items: List.generate(
+                                  5,
+                                  (index) => DropdownMenuItem(
+                                    value: index + 1,
+                                    child: Text('Day ${index + 1}'),
+                                  ),
+                                ),
+                                onChanged: isEditing
+                                    ? null
+                                    : (value) => setState(() => _day = value!),
                               ),
                             ),
                           ],
@@ -245,34 +308,66 @@ class _LessonFormDrawerState extends ConsumerState<LessonFormDrawer> {
                         const SizedBox(height: 16),
                         TextFormField(
                           controller: _titleController,
-                          decoration: const InputDecoration(labelText: 'Lesson Title', border: OutlineInputBorder(), filled: true, fillColor: Colors.white),
-                          validator: (value) => value == null || value.trim().isEmpty ? 'Required' : null,
+                          decoration: const InputDecoration(
+                            labelText: 'Lesson Title',
+                            border: OutlineInputBorder(),
+                            filled: true,
+                            fillColor: Colors.white,
+                          ),
+                          validator: (value) =>
+                              value == null || value.trim().isEmpty
+                              ? 'Required'
+                              : null,
                         ),
                         const SizedBox(height: 16),
                         TextFormField(
                           controller: _topicController,
-                          decoration: const InputDecoration(labelText: 'Topic (Optional)', border: OutlineInputBorder(), filled: true, fillColor: Colors.white),
+                          decoration: const InputDecoration(
+                            labelText: 'Topic (Optional)',
+                            border: OutlineInputBorder(),
+                            filled: true,
+                            fillColor: Colors.white,
+                          ),
                         ),
                         const SizedBox(height: 16),
                         TextFormField(
                           controller: _verseController,
-                          decoration: const InputDecoration(labelText: 'Bible Verse', border: OutlineInputBorder(), filled: true, fillColor: Colors.white),
-                          validator: (value) => value == null || value.trim().isEmpty ? 'Required' : null,
+                          decoration: const InputDecoration(
+                            labelText: 'Bible Verse',
+                            border: OutlineInputBorder(),
+                            filled: true,
+                            fillColor: Colors.white,
+                          ),
+                          validator: (value) =>
+                              value == null || value.trim().isEmpty
+                              ? 'Required'
+                              : null,
                         ),
                         const SizedBox(height: 16),
                         TextFormField(
                           controller: _minutesController,
-                          decoration: const InputDecoration(labelText: 'Estimated Minutes', border: OutlineInputBorder(), filled: true, fillColor: Colors.white),
+                          decoration: const InputDecoration(
+                            labelText: 'Estimated Minutes',
+                            border: OutlineInputBorder(),
+                            filled: true,
+                            fillColor: Colors.white,
+                          ),
                           keyboardType: TextInputType.number,
                         ),
                         const SizedBox(height: 32),
                         const Divider(color: Color(0xFFE2E8F0)),
                         const SizedBox(height: 32),
-                        
+
                         _buildRichTextSection('Connect', _connectController),
                         _buildRichTextSection('Discover', _discoverController),
-                        _buildRichTextSection('Challenge', _challengeController),
-                        _buildRichTextSection('Still Thirsty', _stillThirstyController),
+                        _buildRichTextSection(
+                          'Challenge',
+                          _challengeController,
+                        ),
+                        _buildRichTextSection(
+                          'Still Thirsty',
+                          _stillThirstyController,
+                        ),
                       ],
                     ),
                   ),
@@ -290,13 +385,19 @@ class _LessonFormDrawerState extends ConsumerState<LessonFormDrawer> {
                   TextButton.icon(
                     onPressed: _deleteLesson,
                     icon: const Icon(Icons.delete, color: AppColors.danger),
-                    label: const Text('Delete', style: TextStyle(color: AppColors.danger)),
+                    label: const Text(
+                      'Delete',
+                      style: TextStyle(color: AppColors.danger),
+                    ),
                   )
                 else
                   const SizedBox(),
                 Row(
                   children: [
-                    TextButton(onPressed: widget.onClose, child: const Text('Cancel')),
+                    TextButton(
+                      onPressed: widget.onClose,
+                      child: const Text('Cancel'),
+                    ),
                     const SizedBox(width: 16),
                     ElevatedButton(
                       onPressed: _saveLesson,

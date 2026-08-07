@@ -7,7 +7,7 @@ class LessonRepositoryImpl implements LessonRepository {
   final FirebaseFirestore _firestore;
 
   LessonRepositoryImpl({FirebaseFirestore? firestore})
-      : _firestore = firestore ?? FirebaseFirestore.instance;
+    : _firestore = firestore ?? FirebaseFirestore.instance;
 
   CollectionReference<Map<String, dynamic>> get _lessonsRef =>
       _firestore.collection('lessons');
@@ -22,20 +22,26 @@ class LessonRepositoryImpl implements LessonRepository {
         .orderBy('day', descending: false)
         .snapshots()
         .map((snapshot) {
-      return snapshot.docs
-          .map((doc) => LessonModel.fromJson({...doc.data(), 'lessonId': doc.id}))
-          .toList();
-    });
+          return snapshot.docs
+              .map(
+                (doc) =>
+                    LessonModel.fromJson({...doc.data(), 'lessonId': doc.id}),
+              )
+              .toList();
+        });
   }
 
   @override
   Future<void> createLesson(LessonModel lesson) async {
-    final docId = 'week${lesson.week.toString().padLeft(2, '0')}_day${lesson.day.toString().padLeft(2, '0')}';
-    
+    final docId =
+        'week${lesson.week.toString().padLeft(2, '0')}_day${lesson.day.toString().padLeft(2, '0')}';
+
     // Check if lesson exists
     final doc = await _lessonsRef.doc(docId).get();
     if (doc.exists) {
-      throw Exception('Lesson for Week ${lesson.week}, Day ${lesson.day} already exists.');
+      throw Exception(
+        'Lesson for Week ${lesson.week}, Day ${lesson.day} already exists.',
+      );
     }
 
     final lessonWithId = lesson.copyWith(lessonId: docId);
@@ -67,22 +73,28 @@ class LessonRepositoryImpl implements LessonRepository {
     final chunks = <List<LessonModel>>[];
     int chunkSize = 400;
     for (var i = 0; i < lessons.length; i += chunkSize) {
-      chunks.add(lessons.sublist(i, i + chunkSize > lessons.length ? lessons.length : i + chunkSize));
+      chunks.add(
+        lessons.sublist(
+          i,
+          i + chunkSize > lessons.length ? lessons.length : i + chunkSize,
+        ),
+      );
     }
 
     for (var chunk in chunks) {
       final batch = _firestore.batch();
       for (var lesson in chunk) {
-        final docId = 'week${lesson.week.toString().padLeft(2, '0')}_day${lesson.day.toString().padLeft(2, '0')}';
+        final docId =
+            'week${lesson.week.toString().padLeft(2, '0')}_day${lesson.day.toString().padLeft(2, '0')}';
         final docRef = _lessonsRef.doc(docId);
-        
+
         // We will just set with merge to update existing ones and create new ones
         final lessonWithId = lesson.copyWith(lessonId: docId);
         final data = lessonWithId.toJson();
-        
-        // Don't overwrite createdAt if it exists? 
+
+        // Don't overwrite createdAt if it exists?
         // With merge: true, if we don't supply createdAt, it won't overwrite it.
-        // But if lesson.createdAt is null, toJson doesn't include it. 
+        // But if lesson.createdAt is null, toJson doesn't include it.
         // We can just use set with SetOptions(merge: true).
         batch.set(docRef, data, SetOptions(merge: true));
       }
@@ -106,8 +118,10 @@ class LessonRepositoryImpl implements LessonRepository {
     return _importHistoryRef
         .orderBy('importedAt', descending: true)
         .snapshots()
-        .map((snapshot) => snapshot.docs
-            .map((doc) => ImportHistoryModel.fromJson(doc.data(), doc.id))
-            .toList());
+        .map(
+          (snapshot) => snapshot.docs
+              .map((doc) => ImportHistoryModel.fromJson(doc.data(), doc.id))
+              .toList(),
+        );
   }
 }

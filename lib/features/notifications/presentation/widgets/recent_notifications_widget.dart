@@ -33,23 +33,42 @@ class RecentNotificationsWidget extends ConsumerWidget {
                 TextButton(
                   onPressed: () => context.go('/notifications'),
                   child: const Text('View All'),
-                )
+                ),
               ],
             ),
             const Divider(height: 32),
-            
+
             // Statistics Summary
             recentAsync.maybeWhen(
               data: (notifications) {
-                final sentToday = notifications.where((n) => n.status == NotificationStatus.sent && n.sentAt != null && _isToday(n.sentAt!)).length;
-                final scheduled = notifications.where((n) => n.status == NotificationStatus.scheduled).length;
-                final failed = notifications.where((n) => n.status == NotificationStatus.failed).length;
-                
+                final sentToday = notifications
+                    .where(
+                      (n) =>
+                          n.status == NotificationStatus.sent &&
+                          n.sentAt != null &&
+                          _isToday(n.sentAt!),
+                    )
+                    .length;
+                final scheduled = notifications
+                    .where((n) => n.status == NotificationStatus.scheduled)
+                    .length;
+                final failed = notifications
+                    .where((n) => n.status == NotificationStatus.failed)
+                    .length;
+
                 return Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    _buildStat('Sent Today', sentToday.toString(), color: Colors.green),
-                    _buildStat('Scheduled', scheduled.toString(), color: Colors.blue),
+                    _buildStat(
+                      'Sent Today',
+                      sentToday.toString(),
+                      color: Colors.green,
+                    ),
+                    _buildStat(
+                      'Scheduled',
+                      scheduled.toString(),
+                      color: Colors.blue,
+                    ),
                     _buildStat('Failed', failed.toString(), color: Colors.red),
                   ],
                 );
@@ -57,14 +76,19 @@ class RecentNotificationsWidget extends ConsumerWidget {
               orElse: () => const SizedBox(),
             ),
             const SizedBox(height: 24),
-            
+
             // List of recent 5
             recentAsync.when(
               data: (notifications) {
                 if (notifications.isEmpty) {
                   return const SizedBox(
                     height: 100,
-                    child: Center(child: Text('No recent notifications.', style: TextStyle(color: Colors.grey))),
+                    child: Center(
+                      child: Text(
+                        'No recent notifications.',
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                    ),
                   );
                 }
                 return ListView.separated(
@@ -76,11 +100,20 @@ class RecentNotificationsWidget extends ConsumerWidget {
                     final n = notifications[index];
                     return ListTile(
                       contentPadding: EdgeInsets.zero,
-                      title: Text(n.title, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontWeight: FontWeight.w600)),
+                      title: Text(
+                        n.title,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(fontWeight: FontWeight.w600),
+                      ),
                       subtitle: Text(
                         n.deliveryType == 'scheduled'
                             ? 'Scheduled: ${n.scheduledAt != null ? DateFormat('dd MMM, HH:mm').format(n.scheduledAt!) : ""}'
-                            : (n.sentAt != null ? DateFormat('dd MMM, HH:mm').format(n.sentAt!) : 'Draft'),
+                            : (n.sentAt != null
+                                  ? DateFormat(
+                                      'dd MMM, HH:mm',
+                                    ).format(n.sentAt!)
+                                  : 'Draft'),
                         style: const TextStyle(fontSize: 12),
                       ),
                       trailing: _buildStatusChip(n.status),
@@ -106,13 +139,26 @@ class RecentNotificationsWidget extends ConsumerWidget {
 
   bool _isToday(DateTime date) {
     final now = DateTime.now();
-    return date.year == now.year && date.month == now.month && date.day == now.day;
+    return date.year == now.year &&
+        date.month == now.month &&
+        date.day == now.day;
   }
 
-  Widget _buildStat(String label, String value, {Color color = Colors.black87}) {
+  Widget _buildStat(
+    String label,
+    String value, {
+    Color color = Colors.black87,
+  }) {
     return Column(
       children: [
-        Text(value, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: color)),
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: color,
+          ),
+        ),
         const SizedBox(height: 4),
         Text(label, style: const TextStyle(color: Colors.grey, fontSize: 12)),
       ],
@@ -154,7 +200,11 @@ class RecentNotificationsWidget extends ConsumerWidget {
       ),
       child: Text(
         status.name.toUpperCase(),
-        style: TextStyle(color: textColor, fontSize: 10, fontWeight: FontWeight.bold),
+        style: TextStyle(
+          color: textColor,
+          fontSize: 10,
+          fontWeight: FontWeight.bold,
+        ),
       ),
     );
   }

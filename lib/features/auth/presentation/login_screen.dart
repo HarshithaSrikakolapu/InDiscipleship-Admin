@@ -20,6 +20,54 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   String? _errorMessage;
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkExistingAuth();
+    });
+  }
+
+  Future<void> _checkExistingAuth() async {
+    if (!mounted) return;
+    final authRepo = ref.read(authRepositoryProvider);
+    final user = authRepo.currentUser;
+    if (user != null) {
+      setState(() {
+        _isLoading = true;
+      });
+      try {
+        final isAdmin = await ref
+            .read(adminRepositoryProvider)
+            .verifyAdminStatus(user.uid);
+        if (isAdmin) {
+          if (mounted) {
+            context.go('/dashboard');
+          }
+        } else {
+          // This should realistically never be reached since verifyAdminStatus now throws,
+          // but we'll leave it as a fallback.
+          await authRepo.signOut();
+          if (mounted) {
+            setState(() {
+              _isLoading = false;
+              _errorMessage =
+                  'Access denied. You do not have admin privileges.';
+            });
+          }
+        }
+      } catch (e) {
+        await authRepo.signOut();
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+            _errorMessage = e.toString().replaceAll('Exception: ', '');
+          });
+        }
+      }
+    }
+  }
+
+  @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
@@ -52,15 +100,20 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           }
         } else {
           await authRepo.signOut();
-          setState(() {
-            _errorMessage = 'Access denied. You do not have admin privileges.';
-          });
+          if (mounted) {
+            setState(() {
+              _errorMessage =
+                  'Access denied. You do not have admin privileges.';
+            });
+          }
         }
       }
     } catch (e) {
-      setState(() {
-        _errorMessage = e.toString();
-      });
+      if (mounted) {
+        setState(() {
+          _errorMessage = e.toString().replaceAll('Exception: ', '');
+        });
+      }
     } finally {
       if (mounted) {
         setState(() {

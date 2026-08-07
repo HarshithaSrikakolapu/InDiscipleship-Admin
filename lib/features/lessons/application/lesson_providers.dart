@@ -9,9 +9,10 @@ final lessonRepositoryProvider = Provider<LessonRepository>((ref) {
   return LessonRepositoryImpl();
 });
 
-final lessonControllerProvider = NotifierProvider<LessonController, LessonState>(() {
-  return LessonController();
-});
+final lessonControllerProvider =
+    NotifierProvider<LessonController, LessonState>(() {
+      return LessonController();
+    });
 
 final lessonsStreamProvider = StreamProvider<List<LessonModel>>((ref) {
   final repository = ref.watch(lessonRepositoryProvider);

@@ -1,4 +1,3 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../users/domain/app_user.dart';
 
 abstract class MentorRepository {
@@ -25,10 +24,10 @@ abstract class MentorRepository {
 
   /// Removes a user from their assigned mentor
   Future<void> removeUserFromMentor(String userId);
-  
+
   /// Gets all users assigned to a specific mentor
   Stream<List<AppUser>> getAssignedUsersStream(String mentorId);
-  
+
   /// Get users eligible for promotion (e.g. finished the program)
   /// Currently assuming we can query users by a completion flag or similar.
   /// For this implementation we will fetch users who are not mentors.

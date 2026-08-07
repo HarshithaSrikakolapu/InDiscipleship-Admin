@@ -128,13 +128,21 @@ class _RemindersScreenState extends ConsumerState<RemindersScreen> {
         data: (settings) {
           if (!_isInitialized) {
             _prayerEnabled = settings.prayerReminder.enabled;
-            _prayerTitleController = TextEditingController(text: settings.prayerReminder.title);
-            _prayerMessageController = TextEditingController(text: settings.prayerReminder.message);
+            _prayerTitleController = TextEditingController(
+              text: settings.prayerReminder.title,
+            );
+            _prayerMessageController = TextEditingController(
+              text: settings.prayerReminder.message,
+            );
             _prayerTime = settings.prayerReminder.defaultTime;
 
             _lessonEnabled = settings.lessonReminder.enabled;
-            _lessonTitleController = TextEditingController(text: settings.lessonReminder.title);
-            _lessonMessageController = TextEditingController(text: settings.lessonReminder.message);
+            _lessonTitleController = TextEditingController(
+              text: settings.lessonReminder.title,
+            );
+            _lessonMessageController = TextEditingController(
+              text: settings.lessonReminder.message,
+            );
             _lessonTime = settings.lessonReminder.defaultTime;
 
             _isInitialized = true;
@@ -227,20 +235,30 @@ class _RemindersScreenState extends ConsumerState<RemindersScreen> {
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
                               ElevatedButton.icon(
-                                onPressed: isSaving ? null : () => _saveSettings(settings),
+                                onPressed: isSaving
+                                    ? null
+                                    : () => _saveSettings(settings),
                                 icon: isSaving
                                     ? const SizedBox(
                                         width: 16,
                                         height: 16,
-                                        child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                                        child: CircularProgressIndicator(
+                                          color: Colors.white,
+                                          strokeWidth: 2,
+                                        ),
                                       )
                                     : const Icon(Icons.save),
                                 label: const Text('Save Changes'),
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: AppColors.primary,
                                   foregroundColor: Colors.white,
-                                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 18),
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 32,
+                                    vertical: 18,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
                                 ),
                               ),
                             ],
@@ -303,7 +321,7 @@ class _RemindersScreenState extends ConsumerState<RemindersScreen> {
                 Switch(
                   value: enabled,
                   onChanged: onEnabledChanged,
-                  activeColor: AppColors.primary,
+                  activeThumbColor: AppColors.primary,
                 ),
               ],
             ),
@@ -342,7 +360,9 @@ class _RemindersScreenState extends ConsumerState<RemindersScreen> {
                           style: OutlinedButton.styleFrom(
                             minimumSize: const Size.fromHeight(48),
                             side: const BorderSide(color: AppColors.border),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
                             alignment: Alignment.centerLeft,
                             foregroundColor: AppColors.textPrimary,
                           ),
@@ -394,7 +414,10 @@ class _RemindersScreenState extends ConsumerState<RemindersScreen> {
           borderRadius: BorderRadius.circular(8),
           borderSide: const BorderSide(color: AppColors.border),
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 12,
+        ),
       ),
       validator: validator,
     );

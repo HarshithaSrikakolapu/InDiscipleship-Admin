@@ -82,7 +82,10 @@ class SettingsController extends AsyncNotifier<void> {
     }
   }
 
-  Future<bool> updateMaintenance(MaintenanceSettings settings, String userId) async {
+  Future<bool> updateMaintenance(
+    MaintenanceSettings settings,
+    String userId,
+  ) async {
     state = const AsyncLoading();
     try {
       await _repository.updateMaintenance(settings, userId);
@@ -106,7 +109,10 @@ class SettingsController extends AsyncNotifier<void> {
     }
   }
 
-  Future<bool> updateAppVersion(AppVersionSettings settings, String userId) async {
+  Future<bool> updateAppVersion(
+    AppVersionSettings settings,
+    String userId,
+  ) async {
     state = const AsyncLoading();
     try {
       await _repository.updateAppVersion(settings, userId);

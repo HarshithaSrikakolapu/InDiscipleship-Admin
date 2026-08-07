@@ -125,7 +125,9 @@ class LanguagesSettings {
   factory LanguagesSettings.fromMap(Map<String, dynamic> map) {
     final list = map['supportedLanguages'] as List<dynamic>? ?? [];
     final languages = list
-        .map((item) => SupportedLanguage.fromMap(Map<String, dynamic>.from(item)))
+        .map(
+          (item) => SupportedLanguage.fromMap(Map<String, dynamic>.from(item)),
+        )
         .toList();
     // Sort by display order
     languages.sort((a, b) => a.displayOrder.compareTo(b.displayOrder));
@@ -146,13 +148,55 @@ class LanguagesSettings {
     return const LanguagesSettings(
       defaultLanguage: 'en',
       supportedLanguages: [
-        SupportedLanguage(name: 'English', code: 'en', enabled: true, rtl: false, displayOrder: 1),
-        SupportedLanguage(name: 'Telugu', code: 'te', enabled: true, rtl: false, displayOrder: 2),
-        SupportedLanguage(name: 'Hindi', code: 'hi', enabled: true, rtl: false, displayOrder: 3),
-        SupportedLanguage(name: 'Spanish', code: 'es', enabled: true, rtl: false, displayOrder: 4),
-        SupportedLanguage(name: 'French', code: 'fr', enabled: true, rtl: false, displayOrder: 5),
-        SupportedLanguage(name: 'Greek', code: 'el', enabled: true, rtl: false, displayOrder: 6),
-        SupportedLanguage(name: 'Japanese', code: 'ja', enabled: true, rtl: false, displayOrder: 7),
+        SupportedLanguage(
+          name: 'English',
+          code: 'en',
+          enabled: true,
+          rtl: false,
+          displayOrder: 1,
+        ),
+        SupportedLanguage(
+          name: 'Telugu',
+          code: 'te',
+          enabled: true,
+          rtl: false,
+          displayOrder: 2,
+        ),
+        SupportedLanguage(
+          name: 'Hindi',
+          code: 'hi',
+          enabled: true,
+          rtl: false,
+          displayOrder: 3,
+        ),
+        SupportedLanguage(
+          name: 'Spanish',
+          code: 'es',
+          enabled: true,
+          rtl: false,
+          displayOrder: 4,
+        ),
+        SupportedLanguage(
+          name: 'French',
+          code: 'fr',
+          enabled: true,
+          rtl: false,
+          displayOrder: 5,
+        ),
+        SupportedLanguage(
+          name: 'Greek',
+          code: 'el',
+          enabled: true,
+          rtl: false,
+          displayOrder: 6,
+        ),
+        SupportedLanguage(
+          name: 'Japanese',
+          code: 'ja',
+          enabled: true,
+          rtl: false,
+          displayOrder: 7,
+        ),
       ],
     );
   }
@@ -182,7 +226,8 @@ class PrivacySettings {
       content: map['content'] ?? '',
       draftContent: map['draftContent'] ?? map['content'] ?? '',
       version: map['version'] ?? 1,
-      lastUpdated: (map['lastUpdated'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      lastUpdated:
+          (map['lastUpdated'] as Timestamp?)?.toDate() ?? DateTime.now(),
       updatedBy: map['updatedBy'] ?? '',
       publishedAt: (map['publishedAt'] as Timestamp?)?.toDate(),
       publishedBy: map['publishedBy'] ?? '',
@@ -238,7 +283,8 @@ class TermsSettings {
       content: map['content'] ?? '',
       draftContent: map['draftContent'] ?? map['content'] ?? '',
       version: map['version'] ?? 1,
-      lastUpdated: (map['lastUpdated'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      lastUpdated:
+          (map['lastUpdated'] as Timestamp?)?.toDate() ?? DateTime.now(),
       updatedBy: map['updatedBy'] ?? '',
       publishedAt: (map['publishedAt'] as Timestamp?)?.toDate(),
       publishedBy: map['publishedBy'] ?? '',
@@ -288,7 +334,9 @@ class MaintenanceSettings {
   factory MaintenanceSettings.fromMap(Map<String, dynamic> map) {
     return MaintenanceSettings(
       enabled: map['enabled'] ?? false,
-      message: map['message'] ?? 'The application is currently under maintenance. Please try again later.',
+      message:
+          map['message'] ??
+          'The application is currently under maintenance. Please try again later.',
       estimatedEndTime: (map['estimatedEndTime'] as Timestamp?)?.toDate(),
       updatedAt: (map['updatedAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
       updatedBy: map['updatedBy'] ?? '',
@@ -299,7 +347,8 @@ class MaintenanceSettings {
     return {
       'enabled': enabled,
       'message': message,
-      if (estimatedEndTime != null) 'estimatedEndTime': Timestamp.fromDate(estimatedEndTime!),
+      if (estimatedEndTime != null)
+        'estimatedEndTime': Timestamp.fromDate(estimatedEndTime!),
       'updatedAt': Timestamp.fromDate(updatedAt),
       'updatedBy': updatedBy,
     };
@@ -308,7 +357,8 @@ class MaintenanceSettings {
   factory MaintenanceSettings.empty() {
     return MaintenanceSettings(
       enabled: false,
-      message: 'The application is currently under maintenance. Please try again later.',
+      message:
+          'The application is currently under maintenance. Please try again later.',
       estimatedEndTime: null,
       updatedAt: DateTime.now(),
       updatedBy: '',
@@ -319,9 +369,7 @@ class MaintenanceSettings {
 class FeatureFlagsSettings {
   final Map<String, bool> flags;
 
-  const FeatureFlagsSettings({
-    required this.flags,
-  });
+  const FeatureFlagsSettings({required this.flags});
 
   factory FeatureFlagsSettings.fromMap(Map<String, dynamic> map) {
     final Map<String, bool> parsedFlags = {};
@@ -384,7 +432,8 @@ class AppVersionSettings {
       iosVersion: map['iosVersion'] ?? '1.0.0',
       minimumVersion: map['minimumVersion'] ?? '1.0.0',
       releaseNotes: map['releaseNotes'] ?? '',
-      releaseDate: (map['releaseDate'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      releaseDate:
+          (map['releaseDate'] as Timestamp?)?.toDate() ?? DateTime.now(),
       forceUpdate: map['forceUpdate'] ?? false,
       recommendedUpdate: map['recommendedUpdate'] ?? false,
       updatedAt: (map['updatedAt'] as Timestamp?)?.toDate() ?? DateTime.now(),

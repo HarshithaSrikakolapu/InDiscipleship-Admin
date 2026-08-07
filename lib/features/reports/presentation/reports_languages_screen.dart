@@ -22,9 +22,11 @@ class ReportsLanguagesScreen extends ConsumerWidget {
               data: (state) {
                 final languageReports = state.languageReports;
                 if (languageReports == null || languageReports.isEmpty) {
-                  return const Center(child: Text('No language data available.'));
+                  return const Center(
+                    child: Text('No language data available.'),
+                  );
                 }
-                
+
                 return SingleChildScrollView(
                   padding: const EdgeInsets.all(24.0),
                   child: Column(
@@ -104,7 +106,7 @@ class ReportsLanguagesScreen extends ConsumerWidget {
             rows: reports.map((r) {
               return DataRow(
                 cells: [
-                  DataCell(Text(r.language)), 
+                  DataCell(Text(r.language)),
                   DataCell(Text(r.userCount.toString())),
                   DataCell(Text('${r.percentage.toStringAsFixed(1)}%')),
                 ],

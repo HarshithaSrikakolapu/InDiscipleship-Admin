@@ -33,17 +33,19 @@ class AppTheme {
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.primary,
           foregroundColor: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           elevation: 0,
         ),
       ),
-      textTheme: GoogleFonts.interTextTheme(ThemeData.light().textTheme).copyWith(
-        titleLarge: const TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.bold),
-        bodyLarge: const TextStyle(color: AppColors.textPrimary),
-        bodyMedium: const TextStyle(color: AppColors.textSecondary),
-      ),
+      textTheme: GoogleFonts.interTextTheme(ThemeData.light().textTheme)
+          .copyWith(
+            titleLarge: const TextStyle(
+              color: AppColors.textPrimary,
+              fontWeight: FontWeight.bold,
+            ),
+            bodyLarge: const TextStyle(color: AppColors.textPrimary),
+            bodyMedium: const TextStyle(color: AppColors.textSecondary),
+          ),
     );
   }
 

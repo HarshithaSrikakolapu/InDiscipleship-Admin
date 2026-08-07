@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../users/data/user_management_repository.dart';
+
 final _usersSearchStreamProvider = StreamProvider.autoDispose((ref) {
   return ref.watch(userManagementRepositoryProvider).getUsersStream();
 });
@@ -9,10 +10,7 @@ final _usersSearchStreamProvider = StreamProvider.autoDispose((ref) {
 class UserSearchModal extends ConsumerStatefulWidget {
   final List<String> initiallySelectedUids;
 
-  const UserSearchModal({
-    super.key,
-    this.initiallySelectedUids = const [],
-  });
+  const UserSearchModal({super.key, this.initiallySelectedUids = const []});
 
   @override
   ConsumerState<UserSearchModal> createState() => _UserSearchModalState();
@@ -38,9 +36,9 @@ class _UserSearchModalState extends ConsumerState<UserSearchModal> {
   @override
   Widget build(BuildContext context) {
     // We reuse the existing userManagementRepositoryProvider which fetches all users via stream.
-    // For a truly scalable system, this should use a paginated query, but since the existing system 
+    // For a truly scalable system, this should use a paginated query, but since the existing system
     // uses a single stream for all users in UserManagementRepository, we filter on the client for now.
-    // In a production app with >100k users, this should be a paginated Algolia/Typesense search or 
+    // In a production app with >100k users, this should be a paginated Algolia/Typesense search or
     // a paginated Firestore query with startAfter.
     final usersAsync = ref.watch(_usersSearchStreamProvider);
 
@@ -75,7 +73,9 @@ class _UserSearchModalState extends ConsumerState<UserSearchModal> {
             Expanded(
               child: usersAsync.when(
                 data: (viewModels) {
-                  final filteredUsers = viewModels.map((vm) => vm.user).where((user) {
+                  final filteredUsers = viewModels.map((vm) => vm.user).where((
+                    user,
+                  ) {
                     final q = _searchQuery.toLowerCase();
                     return user.displayName.toLowerCase().contains(q) ||
                         (user.username?.toLowerCase().contains(q) ?? false) ||
@@ -91,8 +91,12 @@ class _UserSearchModalState extends ConsumerState<UserSearchModal> {
                           TextButton(
                             onPressed: () {
                               setState(() {
-                                final allFilteredIds = filteredUsers.map((u) => u.uid).toList();
-                                final allSelected = allFilteredIds.every((id) => _selectedUids.contains(id));
+                                final allFilteredIds = filteredUsers
+                                    .map((u) => u.uid)
+                                    .toList();
+                                final allSelected = allFilteredIds.every(
+                                  (id) => _selectedUids.contains(id),
+                                );
                                 if (allSelected) {
                                   _selectedUids.removeAll(allFilteredIds);
                                 } else {
@@ -100,8 +104,10 @@ class _UserSearchModalState extends ConsumerState<UserSearchModal> {
                                 }
                               });
                             },
-                            child: const Text('Select / Deselect All (Filtered)'),
-                          )
+                            child: const Text(
+                              'Select / Deselect All (Filtered)',
+                            ),
+                          ),
                         ],
                       ),
                       const Divider(),
@@ -114,10 +120,16 @@ class _UserSearchModalState extends ConsumerState<UserSearchModal> {
                             return CheckboxListTile(
                               value: isSelected,
                               title: Text(user.displayName),
-                              subtitle: Text('${user.email} • ${user.country ?? "Unknown"}'),
+                              subtitle: Text(
+                                '${user.email} • ${user.country ?? "Unknown"}',
+                              ),
                               secondary: CircleAvatar(
-                                backgroundImage: user.photoUrl.isNotEmpty ? NetworkImage(user.photoUrl) : null,
-                                child: user.photoUrl.isEmpty ? Text(user.displayName[0]) : null,
+                                backgroundImage: user.photoUrl.isNotEmpty
+                                    ? NetworkImage(user.photoUrl)
+                                    : null,
+                                child: user.photoUrl.isEmpty
+                                    ? Text(user.displayName[0])
+                                    : null,
                               ),
                               onChanged: (val) {
                                 setState(() {
@@ -136,7 +148,8 @@ class _UserSearchModalState extends ConsumerState<UserSearchModal> {
                   );
                 },
                 loading: () => const Center(child: CircularProgressIndicator()),
-                error: (e, st) => Center(child: Text('Error loading users: $e')),
+                error: (e, st) =>
+                    Center(child: Text('Error loading users: $e')),
               ),
             ),
           ],

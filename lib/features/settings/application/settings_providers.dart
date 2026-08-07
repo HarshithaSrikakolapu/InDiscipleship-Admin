@@ -15,6 +15,7 @@ final settingsStreamProvider = StreamProvider.autoDispose<SettingsModel>((ref) {
   return repo.getSettingsStream();
 });
 
-final settingsControllerProvider = AsyncNotifierProvider.autoDispose<SettingsController, void>(() {
-  return SettingsController();
-});
+final settingsControllerProvider =
+    AsyncNotifierProvider.autoDispose<SettingsController, void>(() {
+      return SettingsController();
+    });

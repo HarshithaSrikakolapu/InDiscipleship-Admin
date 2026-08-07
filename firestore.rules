@@ -2,64 +2,212 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
+    // -------------------------------------------------------------------------
+    // HELPER FUNCTIONS
+    // -------------------------------------------------------------------------
     function isSignedIn() {
       return request.auth != null;
     }
-
+    
     function isAdmin() {
-      return isSignedIn() &&
-             exists(
-               /databases/$(database)/documents/admins/$(request.auth.uid)
-             );
+      return isSignedIn() && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+    
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+    
+    function isMentor() {
+      return isSignedIn() && (
+        ('role' in get(/databases/$(database)/documents/users/$(request.auth.uid)).data && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'mentor') ||
+        ('isMentor' in get(/databases/$(database)/documents/users/$(request.auth.uid)).data && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isMentor == true)
+      );
+    }
+    
+    function isFamilyMember(familyId) {
+      return isSignedIn() && familyId != null && 'elijahFamilyId' in get(/databases/$(database)/documents/users/$(request.auth.uid)).data && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.elijahFamilyId == familyId;
+    }
+    
+    function isFamilyMentor(familyId) {
+      return isSignedIn() && familyId != null && 'mentorId' in get(/databases/$(database)/documents/elijah_families/$(familyId)).data && get(/databases/$(database)/documents/elijah_families/$(familyId)).data.mentorId == request.auth.uid;
     }
 
+    function isDocOwner(docData) {
+      return ('userId' in docData && docData.userId == request.auth.uid) || 
+             ('uid' in docData && docData.uid == request.auth.uid) ||
+             ('discipleId' in docData && docData.discipleId == request.auth.uid);
+    }
+
+    function isDocFamilyMember(docData) {
+      return ('familyId' in docData && isFamilyMember(docData.familyId)) || 
+             ('elijahFamilyId' in docData && isFamilyMember(docData.elijahFamilyId));
+    }
+
+    function isDocFamilyMentor(docData) {
+      return ('familyId' in docData && isFamilyMentor(docData.familyId)) || 
+             ('elijahFamilyId' in docData && isFamilyMentor(docData.elijahFamilyId));
+    }
+
+    function safeUserUpdate() {
+      return ( !('role' in request.resource.data) && !('role' in resource.data) || ('role' in request.resource.data && 'role' in resource.data && request.resource.data.role == resource.data.role) ) &&
+             ( !('isMentor' in request.resource.data) && !('isMentor' in resource.data) || ('isMentor' in request.resource.data && 'isMentor' in resource.data && request.resource.data.isMentor == resource.data.isMentor) ) &&
+             ( !('isAdmin' in request.resource.data) && !('isAdmin' in resource.data) || ('isAdmin' in request.resource.data && 'isAdmin' in resource.data && request.resource.data.isAdmin == resource.data.isAdmin) ) &&
+             ( !('programCompleted' in request.resource.data) && !('programCompleted' in resource.data) || ('programCompleted' in request.resource.data && 'programCompleted' in resource.data && request.resource.data.programCompleted == resource.data.programCompleted) ) &&
+             ( !('completionPercentage' in request.resource.data) && !('completionPercentage' in resource.data) || ('completionPercentage' in request.resource.data && 'completionPercentage' in resource.data && request.resource.data.completionPercentage == resource.data.completionPercentage) ) &&
+             ( !('mentorConnected' in request.resource.data) && !('mentorConnected' in resource.data) || ('mentorConnected' in request.resource.data && 'mentorConnected' in resource.data && request.resource.data.mentorConnected == resource.data.mentorConnected) );
+    }
+
+    // -------------------------------------------------------------------------
+    // ADMIN ONLY COLLECTIONS
+    // -------------------------------------------------------------------------
+    match /settings/{docId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+    
+    match /audit_logs/{docId} {
+      allow read, write: if isAdmin();
+    }
+    
+    match /import_history/{docId} {
+      allow read, write: if isAdmin();
+    }
+    
     match /admins/{adminId} {
-      allow read: if isAdmin();
-      allow write: if false;
+      allow read: if request.auth.uid == adminId || isAdmin();
+      allow write: if isAdmin();
     }
 
+    // -------------------------------------------------------------------------
+    // USERS & PROGRESS
+    // -------------------------------------------------------------------------
     match /users/{userId} {
-
-      // User can read their own document
-      allow read: if isSignedIn() &&
-                  request.auth.uid == userId;
-
-      // User can only update safe profile fields
-      allow update: if isSignedIn() &&
-                    request.auth.uid == userId &&
-                    request.resource.data.diff(resource.data)
-                      .affectedKeys()
-                      .hasOnly([
-                        'language',
-                        'notificationEnabled',
-                        'lastLoginAt'
-                      ]);
-
-      // Admin can manage all users
-      allow read, update: if isAdmin();
-
-      allow create: if isSignedIn() &&
-                    request.auth.uid == userId;
-
-      allow delete: if false;
+      allow read: if isOwner(userId) || isAdmin() || ('elijahFamilyId' in resource.data && isFamilyMentor(resource.data.elijahFamilyId));
+      allow create: if isOwner(userId);
+      allow delete: if isAdmin();
+      allow update: if isAdmin() || (isOwner(userId) && safeUserUpdate());
     }
 
-    match /announcements/{announcementId} {
-
-      allow read: if isSignedIn() &&
-                  resource.data.isActive == true &&
-                  resource.data.isDeleted == false;
-
-      allow create, update, delete: if isAdmin();
+    match /user_progress/{userId} {
+      allow read: if isOwner(userId) || isAdmin() || ('elijahFamilyId' in get(/databases/$(database)/documents/users/$(userId)).data && isFamilyMentor(get(/databases/$(database)/documents/users/$(userId)).data.elijahFamilyId));
+      allow write: if isOwner(userId) || isAdmin();
+      
+      match /lesson_progress/{lessonId} {
+        allow read: if isOwner(userId) || isAdmin() || ('elijahFamilyId' in get(/databases/$(database)/documents/users/$(userId)).data && isFamilyMentor(get(/databases/$(database)/documents/users/$(userId)).data.elijahFamilyId));
+        allow write: if isOwner(userId) || isAdmin();
+      }
+      
+      match /completed_lessons/{lessonId} {
+        allow read: if isOwner(userId) || isAdmin() || ('elijahFamilyId' in get(/databases/$(database)/documents/users/$(userId)).data && isFamilyMentor(get(/databases/$(database)/documents/users/$(userId)).data.elijahFamilyId));
+        allow write: if isOwner(userId) || isAdmin();
+      }
     }
 
-    match /mentors/{mentorId} {
-      allow read: if isAdmin();
+    match /lesson_completions/{docId} {
+      allow read: if isDocOwner(resource.data) || isAdmin() || isDocFamilyMentor(resource.data);
+      allow create: if isDocOwner(request.resource.data) || isAdmin();
+      allow update, delete: if isDocOwner(resource.data) || isAdmin();
     }
 
-    match /settings/{documentId} {
+    match /journals/{docId} {
+      allow read: if isDocOwner(resource.data) || isAdmin() || isDocFamilyMentor(resource.data);
+      allow create: if isDocOwner(request.resource.data) || isAdmin();
+      allow update, delete: if isDocOwner(resource.data) || isAdmin();
+    }
+
+    match /lesson_participant_responses/{docId} {
+      allow read: if isDocOwner(resource.data) || isAdmin() || isDocFamilyMentor(resource.data);
+      allow create: if isDocOwner(request.resource.data) || isAdmin();
+      allow update, delete: if isDocOwner(resource.data) || isAdmin();
+    }
+
+    // -------------------------------------------------------------------------
+    // FAMILIES & MENTORSHIP
+    // -------------------------------------------------------------------------
+    match /elijah_families/{familyId} {
+      allow read: if isFamilyMember(familyId) || isFamilyMentor(familyId) || isAdmin();
+      allow write: if isFamilyMentor(familyId) || isAdmin();
+    }
+
+    match /family_active_lessons/{familyId} {
+      allow read: if isFamilyMember(familyId) || isFamilyMentor(familyId) || isAdmin();
+      allow write: if isFamilyMentor(familyId) || isAdmin();
+    }
+
+    match /family_chats/{familyId} {
+      allow read: if isFamilyMember(familyId) || isFamilyMentor(familyId) || isAdmin();
+      allow create: if isFamilyMember(familyId) || isFamilyMentor(familyId) || isAdmin();
+      allow update, delete: if isFamilyMentor(familyId) || isAdmin() || isDocOwner(resource.data);
+      
+      match /messages/{messageId} {
+        allow read: if isFamilyMember(familyId) || isFamilyMentor(familyId) || isAdmin();
+        allow create: if isFamilyMember(familyId) || isFamilyMentor(familyId) || isAdmin();
+        allow update, delete: if isFamilyMentor(familyId) || isAdmin() || isDocOwner(resource.data);
+      }
+      
+      match /participants/{participantId} {
+        allow read: if isFamilyMember(familyId) || isFamilyMentor(familyId) || isAdmin();
+        allow write: if isFamilyMentor(familyId) || isAdmin();
+      }
+      
+      match /chat_settings/{settingId} {
+        allow read: if isFamilyMember(familyId) || isFamilyMentor(familyId) || isAdmin();
+        allow write: if isFamilyMentor(familyId) || isAdmin();
+      }
+    }
+
+    match /attendance/{docId} {
+      allow read: if isDocFamilyMember(resource.data) || isDocFamilyMentor(resource.data) || 
+                     ('discipleId' in resource.data && resource.data.discipleId == request.auth.uid) || 
+                     ('mentorId' in resource.data && resource.data.mentorId == request.auth.uid) || 
+                     isAdmin();
+      allow create: if isDocFamilyMember(request.resource.data) || isDocFamilyMentor(request.resource.data) || 
+                       ('discipleId' in request.resource.data && request.resource.data.discipleId == request.auth.uid) || 
+                       ('mentorId' in request.resource.data && request.resource.data.mentorId == request.auth.uid) || 
+                       isAdmin();
+      allow update, delete: if isDocFamilyMentor(resource.data) || 
+                               ('mentorId' in resource.data && resource.data.mentorId == request.auth.uid) || 
+                               isAdmin();
+    }
+
+    match /mentor_invites/{inviteId} {
+      allow read: if ('mentorId' in resource.data && request.auth.uid == resource.data.mentorId) || ('discipleId' in resource.data && request.auth.uid == resource.data.discipleId) || isAdmin();
+      allow create: if ('mentorId' in request.resource.data && request.auth.uid == request.resource.data.mentorId) || isAdmin();
+      allow update: if ('mentorId' in resource.data && request.auth.uid == resource.data.mentorId) || ('discipleId' in resource.data && request.auth.uid == resource.data.discipleId) || isAdmin();
+      allow delete: if ('mentorId' in resource.data && request.auth.uid == resource.data.mentorId) || isAdmin();
+    }
+
+    // -------------------------------------------------------------------------
+    // PUBLIC CONTENT
+    // -------------------------------------------------------------------------
+    match /lessons/{docId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+    match /program/{docId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+    match /notifications/{docId} {
+      allow read: if isDocOwner(resource.data) || isAdmin();
+      allow write: if isAdmin() || (isMentor() && 'uid' in request.resource.data && 'elijahFamilyId' in get(/databases/$(database)/documents/users/$(request.resource.data.uid)).data && isFamilyMentor(get(/databases/$(database)/documents/users/$(request.resource.data.uid)).data.elijahFamilyId));
+    }
+    match /broadcast_notifications/{docId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+    match /announcements/{docId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+    match /community_updates/{docId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+    match /security_questions/{docId} {
       allow read: if true;
       allow write: if isAdmin();
     }
+
   }
 }

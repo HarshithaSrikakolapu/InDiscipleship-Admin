@@ -17,13 +17,18 @@ class DashboardAnalyticsModel {
 
   // Pre-computed Chart Data
   final Map<String, int> monthlyRegistrations; // e.g., {'Jan': 10, 'Feb': 15}
-  final Map<String, int> dailyActiveUsers;     // e.g., {'2026-07-01': 5, ...}
-  final Map<String, double> lessonCompletionByWeek; // e.g., {'Week 1': 80.5, ...}
-  final Map<String, int> topCompletedLessons;  // e.g., {'Lesson A': 100, ...}
-  final Map<String, int> deviceDistribution;   // e.g., {'Android': 50, 'iOS': 30, 'Web': 20}
-  final Map<String, int> ageGroupDistribution; // e.g., {'Youth': 40, 'Adult': 60}
-  final Map<String, int> languageDistribution; // e.g., {'English': 80, 'Spanish': 20}
-  final Map<String, int> geographyDistribution; // e.g., {'India': 50, 'Australia': 30}
+  final Map<String, int> dailyActiveUsers; // e.g., {'2026-07-01': 5, ...}
+  final Map<String, double>
+  lessonCompletionByWeek; // e.g., {'Week 1': 80.5, ...}
+  final Map<String, int> topCompletedLessons; // e.g., {'Lesson A': 100, ...}
+  final Map<String, int>
+  deviceDistribution; // e.g., {'Android': 50, 'iOS': 30, 'Web': 20}
+  final Map<String, int>
+  ageGroupDistribution; // e.g., {'Youth': 40, 'Adult': 60}
+  final Map<String, int>
+  languageDistribution; // e.g., {'English': 80, 'Spanish': 20}
+  final Map<String, int>
+  geographyDistribution; // e.g., {'India': 50, 'Australia': 30}
 
   // Recent Activity Lists
   final List<Map<String, dynamic>> recentUsers;
@@ -86,7 +91,8 @@ class DashboardAnalyticsModel {
       activeUsersToday: activeUsersToday ?? this.activeUsersToday,
       totalLessons: totalLessons ?? this.totalLessons,
       publishedLessons: publishedLessons ?? this.publishedLessons,
-      completedLessonsToday: completedLessonsToday ?? this.completedLessonsToday,
+      completedLessonsToday:
+          completedLessonsToday ?? this.completedLessonsToday,
       averageCompletion: averageCompletion ?? this.averageCompletion,
       averageStreak: averageStreak ?? this.averageStreak,
       activeMentors: activeMentors ?? this.activeMentors,
@@ -96,15 +102,19 @@ class DashboardAnalyticsModel {
       hasActivityLogs: hasActivityLogs ?? this.hasActivityLogs,
       monthlyRegistrations: monthlyRegistrations ?? this.monthlyRegistrations,
       dailyActiveUsers: dailyActiveUsers ?? this.dailyActiveUsers,
-      lessonCompletionByWeek: lessonCompletionByWeek ?? this.lessonCompletionByWeek,
+      lessonCompletionByWeek:
+          lessonCompletionByWeek ?? this.lessonCompletionByWeek,
       topCompletedLessons: topCompletedLessons ?? this.topCompletedLessons,
       deviceDistribution: deviceDistribution ?? this.deviceDistribution,
       ageGroupDistribution: ageGroupDistribution ?? this.ageGroupDistribution,
       languageDistribution: languageDistribution ?? this.languageDistribution,
-      geographyDistribution: geographyDistribution ?? this.geographyDistribution,
+      geographyDistribution:
+          geographyDistribution ?? this.geographyDistribution,
       recentUsers: recentUsers ?? this.recentUsers,
-      recentlyUpdatedLessons: recentlyUpdatedLessons ?? this.recentlyUpdatedLessons,
-      recentActivityTimeline: recentActivityTimeline ?? this.recentActivityTimeline,
+      recentlyUpdatedLessons:
+          recentlyUpdatedLessons ?? this.recentlyUpdatedLessons,
+      recentActivityTimeline:
+          recentActivityTimeline ?? this.recentActivityTimeline,
     );
   }
 }

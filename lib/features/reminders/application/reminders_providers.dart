@@ -12,11 +12,16 @@ final remindersRepositoryProvider = Provider<RemindersRepository>((ref) {
   return RemindersRepositoryImpl(firestore, auth);
 });
 
-final remindersStreamProvider = StreamProvider.autoDispose<RemindersSettings>((ref) {
+final remindersStreamProvider = StreamProvider.autoDispose<RemindersSettings>((
+  ref,
+) {
   final repo = ref.watch(remindersRepositoryProvider);
   return repo.getRemindersStream();
 });
 
-final remindersControllerProvider = AsyncNotifierProvider.autoDispose<RemindersController, RemindersSettings>(() {
-  return RemindersController();
-});
+final remindersControllerProvider =
+    AsyncNotifierProvider.autoDispose<RemindersController, RemindersSettings>(
+      () {
+        return RemindersController();
+      },
+    );

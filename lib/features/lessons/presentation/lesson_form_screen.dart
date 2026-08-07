@@ -37,7 +37,9 @@ class _LessonFormScreenState extends ConsumerState<LessonFormScreen> {
     _titleController = TextEditingController(text: lesson?.lessonTitle ?? '');
     _topicController = TextEditingController(text: lesson?.topic ?? '');
     _verseController = TextEditingController(text: lesson?.bibleVerse ?? '');
-    _minutesController = TextEditingController(text: (lesson?.estimatedMinutes ?? 12).toString());
+    _minutesController = TextEditingController(
+      text: (lesson?.estimatedMinutes ?? 12).toString(),
+    );
 
     _connectControllers = (lesson?.connect.isNotEmpty ?? false)
         ? lesson!.connect.map((e) => TextEditingController(text: e)).toList()
@@ -49,7 +51,9 @@ class _LessonFormScreenState extends ConsumerState<LessonFormScreen> {
         ? lesson!.challenge.map((e) => TextEditingController(text: e)).toList()
         : [TextEditingController()];
     _stillThirstyControllers = (lesson?.stillThirsty.isNotEmpty ?? false)
-        ? lesson!.stillThirsty.map((e) => TextEditingController(text: e)).toList()
+        ? lesson!.stillThirsty
+              .map((e) => TextEditingController(text: e))
+              .toList()
         : [TextEditingController()];
   }
 
@@ -59,10 +63,18 @@ class _LessonFormScreenState extends ConsumerState<LessonFormScreen> {
     _topicController.dispose();
     _verseController.dispose();
     _minutesController.dispose();
-    for (var c in _connectControllers) { c.dispose(); }
-    for (var c in _discoverControllers) { c.dispose(); }
-    for (var c in _challengeControllers) { c.dispose(); }
-    for (var c in _stillThirstyControllers) { c.dispose(); }
+    for (var c in _connectControllers) {
+      c.dispose();
+    }
+    for (var c in _discoverControllers) {
+      c.dispose();
+    }
+    for (var c in _challengeControllers) {
+      c.dispose();
+    }
+    for (var c in _stillThirstyControllers) {
+      c.dispose();
+    }
     super.dispose();
   }
 
@@ -81,7 +93,10 @@ class _LessonFormScreenState extends ConsumerState<LessonFormScreen> {
     });
   }
 
-  Widget _buildDynamicList(String title, List<TextEditingController> controllers) {
+  Widget _buildDynamicList(
+    String title,
+    List<TextEditingController> controllers,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -109,7 +124,9 @@ class _LessonFormScreenState extends ConsumerState<LessonFormScreen> {
                       labelText: 'Item ${index + 1}',
                       border: const OutlineInputBorder(),
                     ),
-                    validator: (value) => value == null || value.trim().isEmpty ? 'Required' : null,
+                    validator: (value) => value == null || value.trim().isEmpty
+                        ? 'Required'
+                        : null,
                   ),
                 ),
                 if (controllers.length > 1)
@@ -129,7 +146,8 @@ class _LessonFormScreenState extends ConsumerState<LessonFormScreen> {
   void _saveLesson() async {
     if (_formKey.currentState!.validate()) {
       final newLesson = LessonModel(
-        lessonId: widget.lesson?.lessonId ?? '', // Will be overridden in repo if new
+        lessonId:
+            widget.lesson?.lessonId ?? '', // Will be overridden in repo if new
         week: _week,
         day: _day,
         lessonTitle: _titleController.text.trim(),
@@ -139,12 +157,14 @@ class _LessonFormScreenState extends ConsumerState<LessonFormScreen> {
         connect: _connectControllers.map((c) => c.text.trim()).toList(),
         discover: _discoverControllers.map((c) => c.text.trim()).toList(),
         challenge: _challengeControllers.map((c) => c.text.trim()).toList(),
-        stillThirsty: _stillThirstyControllers.map((c) => c.text.trim()).toList(),
+        stillThirsty: _stillThirstyControllers
+            .map((c) => c.text.trim())
+            .toList(),
         isPublished: widget.lesson?.isPublished ?? false,
       );
 
       final controller = ref.read(lessonControllerProvider.notifier);
-      
+
       if (widget.lesson == null) {
         await controller.createLesson(newLesson);
       } else {
@@ -159,7 +179,10 @@ class _LessonFormScreenState extends ConsumerState<LessonFormScreen> {
         context.pop();
       } else if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(state.error ?? 'Error saving lesson'), backgroundColor: Colors.red),
+          SnackBar(
+            content: Text(state.error ?? 'Error saving lesson'),
+            backgroundColor: Colors.red,
+          ),
         );
       }
     }
@@ -172,9 +195,12 @@ class _LessonFormScreenState extends ConsumerState<LessonFormScreen> {
         title: const Text('Delete Lesson?'),
         content: const Text('This action cannot be undone.'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
           TextButton(
-            onPressed: () => Navigator.pop(context, true), 
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
             child: const Text('Delete', style: TextStyle(color: Colors.red)),
           ),
         ],
@@ -186,13 +212,16 @@ class _LessonFormScreenState extends ConsumerState<LessonFormScreen> {
       await controller.deleteLesson(widget.lesson!.lessonId);
       final state = ref.read(lessonControllerProvider);
       if (state.error == null && mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Lesson deleted')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Lesson deleted')));
         context.pop();
       } else if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(state.error ?? 'Error deleting'), backgroundColor: Colors.red),
+          SnackBar(
+            content: Text(state.error ?? 'Error deleting'),
+            backgroundColor: Colors.red,
+          ),
         );
       }
     }
@@ -225,19 +254,41 @@ class _LessonFormScreenState extends ConsumerState<LessonFormScreen> {
                     children: [
                       Expanded(
                         child: DropdownButtonFormField<int>(
-                          decoration: const InputDecoration(labelText: 'Week', border: OutlineInputBorder()),
+                          decoration: const InputDecoration(
+                            labelText: 'Week',
+                            border: OutlineInputBorder(),
+                          ),
                           initialValue: _week,
-                          items: List.generate(12, (index) => DropdownMenuItem(value: index + 1, child: Text('Week ${index + 1}'))),
-                          onChanged: isEditing ? null : (value) => setState(() => _week = value!),
+                          items: List.generate(
+                            12,
+                            (index) => DropdownMenuItem(
+                              value: index + 1,
+                              child: Text('Week ${index + 1}'),
+                            ),
+                          ),
+                          onChanged: isEditing
+                              ? null
+                              : (value) => setState(() => _week = value!),
                         ),
                       ),
                       const SizedBox(width: 16),
                       Expanded(
                         child: DropdownButtonFormField<int>(
-                          decoration: const InputDecoration(labelText: 'Day', border: OutlineInputBorder()),
+                          decoration: const InputDecoration(
+                            labelText: 'Day',
+                            border: OutlineInputBorder(),
+                          ),
                           initialValue: _day,
-                          items: List.generate(5, (index) => DropdownMenuItem(value: index + 1, child: Text('Day ${index + 1}'))),
-                          onChanged: isEditing ? null : (value) => setState(() => _day = value!),
+                          items: List.generate(
+                            5,
+                            (index) => DropdownMenuItem(
+                              value: index + 1,
+                              child: Text('Day ${index + 1}'),
+                            ),
+                          ),
+                          onChanged: isEditing
+                              ? null
+                              : (value) => setState(() => _day = value!),
                         ),
                       ),
                     ],
@@ -245,32 +296,51 @@ class _LessonFormScreenState extends ConsumerState<LessonFormScreen> {
                   const SizedBox(height: 16),
                   TextFormField(
                     controller: _titleController,
-                    decoration: const InputDecoration(labelText: 'Lesson Title', border: OutlineInputBorder()),
-                    validator: (value) => value == null || value.trim().isEmpty ? 'Required' : null,
+                    decoration: const InputDecoration(
+                      labelText: 'Lesson Title',
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) => value == null || value.trim().isEmpty
+                        ? 'Required'
+                        : null,
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
                     controller: _topicController,
-                    decoration: const InputDecoration(labelText: 'Topic (Optional)', border: OutlineInputBorder()),
+                    decoration: const InputDecoration(
+                      labelText: 'Topic (Optional)',
+                      border: OutlineInputBorder(),
+                    ),
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
                     controller: _verseController,
-                    decoration: const InputDecoration(labelText: 'Bible Verse', border: OutlineInputBorder()),
-                    validator: (value) => value == null || value.trim().isEmpty ? 'Required' : null,
+                    decoration: const InputDecoration(
+                      labelText: 'Bible Verse',
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) => value == null || value.trim().isEmpty
+                        ? 'Required'
+                        : null,
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
                     controller: _minutesController,
-                    decoration: const InputDecoration(labelText: 'Estimated Minutes', border: OutlineInputBorder()),
+                    decoration: const InputDecoration(
+                      labelText: 'Estimated Minutes',
+                      border: OutlineInputBorder(),
+                    ),
                     keyboardType: TextInputType.number,
                   ),
                   const SizedBox(height: 24),
                   _buildDynamicList('Connect', _connectControllers),
                   _buildDynamicList('Discover', _discoverControllers),
                   _buildDynamicList('Challenge', _challengeControllers),
-                  _buildDynamicList('Still Thirsty (Bible References)', _stillThirstyControllers),
-                  
+                  _buildDynamicList(
+                    'Still Thirsty (Bible References)',
+                    _stillThirstyControllers,
+                  ),
+
                   const SizedBox(height: 24),
                   ElevatedButton(
                     onPressed: _saveLesson,

@@ -15,24 +15,26 @@ class NotificationComposerScreen extends ConsumerStatefulWidget {
   const NotificationComposerScreen({super.key, this.initialDraft});
 
   @override
-  ConsumerState<NotificationComposerScreen> createState() => _NotificationComposerScreenState();
+  ConsumerState<NotificationComposerScreen> createState() =>
+      _NotificationComposerScreenState();
 }
 
-class _NotificationComposerScreenState extends ConsumerState<NotificationComposerScreen> {
+class _NotificationComposerScreenState
+    extends ConsumerState<NotificationComposerScreen> {
   final _formKey = GlobalKey<FormState>();
   late String _id;
-  
+
   final _titleController = TextEditingController();
   final _messageController = TextEditingController();
   final _imageUrlController = TextEditingController();
   final _deepLinkController = TextEditingController();
-  
+
   NotificationTargetType _targetType = NotificationTargetType.all;
   List<String> _targetValues = [];
-  
+
   NotificationDelivery _delivery = NotificationDelivery.sendNow;
   NotificationPriority _priority = NotificationPriority.normal;
-  
+
   // Schedule state
   DateTime? _scheduledAt;
   TimeOfDay? _timeOfDay;
@@ -53,7 +55,9 @@ class _NotificationComposerScreenState extends ConsumerState<NotificationCompose
       _deepLinkController.text = widget.initialDraft!.deepLink ?? '';
       _targetType = widget.initialDraft!.targetType;
       _targetValues = List.from(widget.initialDraft!.targetValues);
-      _delivery = widget.initialDraft!.deliveryType == 'scheduled' ? NotificationDelivery.schedule : NotificationDelivery.sendNow;
+      _delivery = widget.initialDraft!.deliveryType == 'scheduled'
+          ? NotificationDelivery.schedule
+          : NotificationDelivery.sendNow;
       _scheduledAt = widget.initialDraft!.scheduledAt;
       if (widget.initialDraft!.scheduledAt != null) {
         _timeOfDay = TimeOfDay.fromDateTime(widget.initialDraft!.scheduledAt!);
@@ -68,7 +72,10 @@ class _NotificationComposerScreenState extends ConsumerState<NotificationCompose
     _deepLinkController.addListener(_markDirty);
 
     // Auto-save every 15 seconds if dirty
-    _autoSaveTimer = Timer.periodic(const Duration(seconds: 15), (_) => _autoSave());
+    _autoSaveTimer = Timer.periodic(
+      const Duration(seconds: 15),
+      (_) => _autoSave(),
+    );
   }
 
   void _markDirty() {
@@ -87,13 +94,15 @@ class _NotificationComposerScreenState extends ConsumerState<NotificationCompose
 
   Future<void> _autoSave() async {
     if (!_isDirty || _isSaving) return;
-    if (_titleController.text.isEmpty && _messageController.text.isEmpty) return; // Don't save empty drafts
+    if (_titleController.text.isEmpty && _messageController.text.isEmpty) {
+      return; // Don't save empty drafts
+    }
 
     setState(() => _isSaving = true);
-    
+
     final draft = _buildModel(NotificationStatus.draft);
     await ref.read(notificationControllerProvider.notifier).saveDraft(draft);
-    
+
     if (mounted) {
       setState(() {
         _isDirty = false;
@@ -111,8 +120,12 @@ class _NotificationComposerScreenState extends ConsumerState<NotificationCompose
       targetType: _targetType,
       targetValues: _targetValues,
       targetFilters: const {},
-      deliveryType: _delivery == NotificationDelivery.schedule ? 'scheduled' : 'sendNow',
-      scheduledAt: _delivery == NotificationDelivery.schedule ? _scheduledAt : null,
+      deliveryType: _delivery == NotificationDelivery.schedule
+          ? 'scheduled'
+          : 'sendNow',
+      scheduledAt: _delivery == NotificationDelivery.schedule
+          ? _scheduledAt
+          : null,
       status: status,
       createdBy: 'admin', // Ideally fetch from Auth service
       createdAt: widget.initialDraft?.createdAt ?? DateTime.now(),
@@ -123,19 +136,28 @@ class _NotificationComposerScreenState extends ConsumerState<NotificationCompose
 
   Future<void> _handlePublish() async {
     if (!_formKey.currentState!.validate()) return;
-    
+
     // Additional validations
-    if (_targetType == NotificationTargetType.selectedUsers && _targetValues.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please select at least one user.')));
+    if (_targetType == NotificationTargetType.selectedUsers &&
+        _targetValues.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please select at least one user.')),
+      );
       return;
     }
     if (_delivery == NotificationDelivery.schedule && _scheduledAt == null) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please select a scheduled date and time.')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please select a scheduled date and time.'),
+        ),
+      );
       return;
     }
 
     final model = _buildModel(
-      _delivery == NotificationDelivery.sendNow ? NotificationStatus.sent : NotificationStatus.scheduled
+      _delivery == NotificationDelivery.sendNow
+          ? NotificationStatus.sent
+          : NotificationStatus.scheduled,
     );
 
     if (_delivery == NotificationDelivery.sendNow) {
@@ -143,13 +165,21 @@ class _NotificationComposerScreenState extends ConsumerState<NotificationCompose
         context: context,
         builder: (ctx) => AlertDialog(
           title: const Text('Send Broadcast?'),
-          content: const Text('This will be sent immediately to the selected targets. Are you sure?'),
+          content: const Text(
+            'This will be sent immediately to the selected targets. Are you sure?',
+          ),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: const Text('Cancel'),
+            ),
             ElevatedButton(
-              onPressed: () => Navigator.pop(ctx, true), 
-              style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary, foregroundColor: Colors.white),
-              child: const Text('Send Now')
+              onPressed: () => Navigator.pop(ctx, true),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary,
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('Send Now'),
             ),
           ],
         ),
@@ -157,7 +187,9 @@ class _NotificationComposerScreenState extends ConsumerState<NotificationCompose
       if (confirm != true) return;
       await ref.read(notificationControllerProvider.notifier).sendNow(model);
     } else {
-      await ref.read(notificationControllerProvider.notifier).scheduleNotification(model);
+      await ref
+          .read(notificationControllerProvider.notifier)
+          .scheduleNotification(model);
     }
 
     if (mounted) {
@@ -178,18 +210,33 @@ class _NotificationComposerScreenState extends ConsumerState<NotificationCompose
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: Text(widget.initialDraft == null ? 'Compose Broadcast' : 'Edit Broadcast Draft'),
+        title: Text(
+          widget.initialDraft == null
+              ? 'Compose Broadcast'
+              : 'Edit Broadcast Draft',
+        ),
         backgroundColor: Colors.white,
         actions: [
           if (_isSaving)
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.0),
-              child: Center(child: SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))),
+              child: Center(
+                child: SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                ),
+              ),
             )
           else if (_lastSaved != null)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Center(child: Text('Draft saved at ${DateFormat('HH:mm').format(_lastSaved!)}', style: const TextStyle(color: Colors.grey, fontSize: 12))),
+              child: Center(
+                child: Text(
+                  'Draft saved at ${DateFormat('HH:mm').format(_lastSaved!)}',
+                  style: const TextStyle(color: Colors.grey, fontSize: 12),
+                ),
+              ),
             ),
           TextButton(
             onPressed: () async {
@@ -201,8 +248,15 @@ class _NotificationComposerScreenState extends ConsumerState<NotificationCompose
           const SizedBox(width: 8),
           ElevatedButton(
             onPressed: _handlePublish,
-            style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary, foregroundColor: Colors.white),
-            child: Text(_delivery == NotificationDelivery.sendNow ? 'Send Now' : 'Schedule'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primary,
+              foregroundColor: Colors.white,
+            ),
+            child: Text(
+              _delivery == NotificationDelivery.sendNow
+                  ? 'Send Now'
+                  : 'Schedule',
+            ),
           ),
           const SizedBox(width: 24),
         ],
@@ -228,25 +282,42 @@ class _NotificationComposerScreenState extends ConsumerState<NotificationCompose
                           children: [
                             TextFormField(
                               controller: _titleController,
-                              decoration: const InputDecoration(labelText: 'Title *', border: OutlineInputBorder()),
-                              validator: (v) => v!.trim().isEmpty ? 'Title is required' : null,
+                              decoration: const InputDecoration(
+                                labelText: 'Title *',
+                                border: OutlineInputBorder(),
+                              ),
+                              validator: (v) => v!.trim().isEmpty
+                                  ? 'Title is required'
+                                  : null,
                             ),
                             const SizedBox(height: 16),
                             TextFormField(
                               controller: _messageController,
-                              decoration: const InputDecoration(labelText: 'Message *', border: OutlineInputBorder()),
+                              decoration: const InputDecoration(
+                                labelText: 'Message *',
+                                border: OutlineInputBorder(),
+                              ),
                               maxLines: 4,
-                              validator: (v) => v!.trim().isEmpty ? 'Message is required' : null,
+                              validator: (v) => v!.trim().isEmpty
+                                  ? 'Message is required'
+                                  : null,
                             ),
                             const SizedBox(height: 16),
                             TextFormField(
                               controller: _imageUrlController,
-                              decoration: const InputDecoration(labelText: 'Image URL (optional)', border: OutlineInputBorder()),
+                              decoration: const InputDecoration(
+                                labelText: 'Image URL (optional)',
+                                border: OutlineInputBorder(),
+                              ),
                             ),
                             const SizedBox(height: 16),
                             TextFormField(
                               controller: _deepLinkController,
-                              decoration: const InputDecoration(labelText: 'Deep Link Route (optional, e.g. /lessons/123)', border: OutlineInputBorder()),
+                              decoration: const InputDecoration(
+                                labelText:
+                                    'Deep Link Route (optional, e.g. /lessons/123)',
+                                border: OutlineInputBorder(),
+                              ),
                             ),
                           ],
                         ),
@@ -262,9 +333,23 @@ class _NotificationComposerScreenState extends ConsumerState<NotificationCompose
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             DropdownButtonFormField<NotificationTargetType>(
-                              decoration: const InputDecoration(labelText: 'Target Type', border: OutlineInputBorder()),
-                              value: _targetType,
-                              items: NotificationTargetType.values.map((t) => DropdownMenuItem(value: t, child: Text(t.name.replaceAll('_', ' ').toUpperCase()))).toList(),
+                              decoration: const InputDecoration(
+                                labelText: 'Target Type',
+                                border: OutlineInputBorder(),
+                              ),
+                              initialValue: _targetType,
+                              items: NotificationTargetType.values
+                                  .map(
+                                    (t) => DropdownMenuItem(
+                                      value: t,
+                                      child: Text(
+                                        t.name
+                                            .replaceAll('_', ' ')
+                                            .toUpperCase(),
+                                      ),
+                                    ),
+                                  )
+                                  .toList(),
                               onChanged: (v) {
                                 if (v != null) {
                                   setState(() {
@@ -275,23 +360,35 @@ class _NotificationComposerScreenState extends ConsumerState<NotificationCompose
                                 }
                               },
                             ),
-                            if (_targetType == NotificationTargetType.selectedUsers) ...[
+                            if (_targetType ==
+                                NotificationTargetType.selectedUsers) ...[
                               const SizedBox(height: 16),
                               Row(
                                 children: [
                                   Expanded(
                                     child: InputDecorator(
-                                      decoration: const InputDecoration(labelText: 'Selected Users', border: OutlineInputBorder()),
-                                      child: Text(_targetValues.isEmpty ? 'No users selected' : '${_targetValues.length} users selected'),
+                                      decoration: const InputDecoration(
+                                        labelText: 'Selected Users',
+                                        border: OutlineInputBorder(),
+                                      ),
+                                      child: Text(
+                                        _targetValues.isEmpty
+                                            ? 'No users selected'
+                                            : '${_targetValues.length} users selected',
+                                      ),
                                     ),
                                   ),
                                   const SizedBox(width: 16),
                                   ElevatedButton(
                                     onPressed: () async {
-                                      final selected = await showDialog<List<String>>(
-                                        context: context,
-                                        builder: (ctx) => UserSearchModal(initiallySelectedUids: _targetValues),
-                                      );
+                                      final selected =
+                                          await showDialog<List<String>>(
+                                            context: context,
+                                            builder: (ctx) => UserSearchModal(
+                                              initiallySelectedUids:
+                                                  _targetValues,
+                                            ),
+                                          );
                                       if (selected != null) {
                                         setState(() {
                                           _targetValues = selected;
@@ -304,28 +401,46 @@ class _NotificationComposerScreenState extends ConsumerState<NotificationCompose
                                 ],
                               ),
                             ],
-                            if (_targetType == NotificationTargetType.selectedCountry) ...[
+                            if (_targetType ==
+                                NotificationTargetType.selectedCountry) ...[
                               const SizedBox(height: 16),
                               TextFormField(
-                                decoration: const InputDecoration(labelText: 'Country Code (comma-separated, e.g. US, IN, CA)', border: OutlineInputBorder()),
+                                decoration: const InputDecoration(
+                                  labelText:
+                                      'Country Code (comma-separated, e.g. US, IN, CA)',
+                                  border: OutlineInputBorder(),
+                                ),
                                 initialValue: _targetValues.join(', '),
                                 onChanged: (v) {
-                                  _targetValues = v.split(',').map((e) => e.trim()).where((e) => e.isNotEmpty).toList();
+                                  _targetValues = v
+                                      .split(',')
+                                      .map((e) => e.trim())
+                                      .where((e) => e.isNotEmpty)
+                                      .toList();
                                   _markDirty();
                                 },
                               ),
                             ],
-                            if (_targetType == NotificationTargetType.selectedLanguage) ...[
+                            if (_targetType ==
+                                NotificationTargetType.selectedLanguage) ...[
                               const SizedBox(height: 16),
                               TextFormField(
-                                decoration: const InputDecoration(labelText: 'Language Code (comma-separated, e.g. en, es, fr)', border: OutlineInputBorder()),
+                                decoration: const InputDecoration(
+                                  labelText:
+                                      'Language Code (comma-separated, e.g. en, es, fr)',
+                                  border: OutlineInputBorder(),
+                                ),
                                 initialValue: _targetValues.join(', '),
                                 onChanged: (v) {
-                                  _targetValues = v.split(',').map((e) => e.trim()).where((e) => e.isNotEmpty).toList();
+                                  _targetValues = v
+                                      .split(',')
+                                      .map((e) => e.trim())
+                                      .where((e) => e.isNotEmpty)
+                                      .toList();
                                   _markDirty();
                                 },
                               ),
-                            ]
+                            ],
                           ],
                         ),
                       ),
@@ -339,11 +454,20 @@ class _NotificationComposerScreenState extends ConsumerState<NotificationCompose
                         child: Column(
                           children: [
                             DropdownButtonFormField<NotificationDelivery>(
-                              decoration: const InputDecoration(labelText: 'Delivery Method', border: OutlineInputBorder()),
-                              value: _delivery,
+                              decoration: const InputDecoration(
+                                labelText: 'Delivery Method',
+                                border: OutlineInputBorder(),
+                              ),
+                              initialValue: _delivery,
                               items: const [
-                                DropdownMenuItem(value: NotificationDelivery.sendNow, child: Text('SEND NOW (IMMEDIATE)')),
-                                DropdownMenuItem(value: NotificationDelivery.schedule, child: Text('SEND LATER (SCHEDULED)')),
+                                DropdownMenuItem(
+                                  value: NotificationDelivery.sendNow,
+                                  child: Text('SEND NOW (IMMEDIATE)'),
+                                ),
+                                DropdownMenuItem(
+                                  value: NotificationDelivery.schedule,
+                                  child: Text('SEND LATER (SCHEDULED)'),
+                                ),
                               ],
                               onChanged: (v) {
                                 if (v != null) {
@@ -361,30 +485,61 @@ class _NotificationComposerScreenState extends ConsumerState<NotificationCompose
                                   Expanded(
                                     child: OutlinedButton.icon(
                                       onPressed: () async {
-                                        final date = await showDatePicker(context: context, initialDate: _scheduledAt ?? DateTime.now(), firstDate: DateTime.now(), lastDate: DateTime(2030));
-                                        if (date != null) setState(() { _scheduledAt = date; _markDirty(); });
+                                        final date = await showDatePicker(
+                                          context: context,
+                                          initialDate:
+                                              _scheduledAt ?? DateTime.now(),
+                                          firstDate: DateTime.now(),
+                                          lastDate: DateTime(2030),
+                                        );
+                                        if (date != null) {
+                                          setState(() {
+                                            _scheduledAt = date;
+                                            _markDirty();
+                                          });
+                                        }
                                       },
                                       icon: const Icon(Icons.calendar_today),
-                                      label: Text(_scheduledAt != null ? DateFormat('dd MMM yyyy').format(_scheduledAt!) : 'Select Date'),
+                                      label: Text(
+                                        _scheduledAt != null
+                                            ? DateFormat(
+                                                'dd MMM yyyy',
+                                              ).format(_scheduledAt!)
+                                            : 'Select Date',
+                                      ),
                                     ),
                                   ),
                                   const SizedBox(width: 16),
                                   Expanded(
                                     child: OutlinedButton.icon(
                                       onPressed: () async {
-                                        final time = await showTimePicker(context: context, initialTime: _timeOfDay ?? TimeOfDay.now());
+                                        final time = await showTimePicker(
+                                          context: context,
+                                          initialTime:
+                                              _timeOfDay ?? TimeOfDay.now(),
+                                        );
                                         if (time != null) {
                                           setState(() {
                                             _timeOfDay = time;
                                             if (_scheduledAt != null) {
-                                              _scheduledAt = DateTime(_scheduledAt!.year, _scheduledAt!.month, _scheduledAt!.day, time.hour, time.minute);
+                                              _scheduledAt = DateTime(
+                                                _scheduledAt!.year,
+                                                _scheduledAt!.month,
+                                                _scheduledAt!.day,
+                                                time.hour,
+                                                time.minute,
+                                              );
                                             }
                                             _markDirty();
                                           });
                                         }
                                       },
                                       icon: const Icon(Icons.access_time),
-                                      label: Text(_timeOfDay != null ? _timeOfDay!.format(context) : 'Select Time'),
+                                      label: Text(
+                                        _timeOfDay != null
+                                            ? _timeOfDay!.format(context)
+                                            : 'Select Time',
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -392,9 +547,19 @@ class _NotificationComposerScreenState extends ConsumerState<NotificationCompose
                             ],
                             const SizedBox(height: 16),
                             DropdownButtonFormField<NotificationPriority>(
-                              decoration: const InputDecoration(labelText: 'Priority', border: OutlineInputBorder()),
-                              value: _priority,
-                              items: NotificationPriority.values.map((t) => DropdownMenuItem(value: t, child: Text(t.name.toUpperCase()))).toList(),
+                              decoration: const InputDecoration(
+                                labelText: 'Priority',
+                                border: OutlineInputBorder(),
+                              ),
+                              initialValue: _priority,
+                              items: NotificationPriority.values
+                                  .map(
+                                    (t) => DropdownMenuItem(
+                                      value: t,
+                                      child: Text(t.name.toUpperCase()),
+                                    ),
+                                  )
+                                  .toList(),
                               onChanged: (v) {
                                 if (v != null) {
                                   setState(() {
@@ -413,7 +578,7 @@ class _NotificationComposerScreenState extends ConsumerState<NotificationCompose
               ),
             ),
           ),
-          
+
           // Right Side - Device Preview
           Expanded(
             flex: 1,
@@ -423,7 +588,14 @@ class _NotificationComposerScreenState extends ConsumerState<NotificationCompose
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    const Text('Device Preview', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.grey)),
+                    const Text(
+                      'Device Preview',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                        color: Colors.grey,
+                      ),
+                    ),
                     const SizedBox(height: 24),
                     Container(
                       width: 300,
@@ -451,7 +623,10 @@ class _NotificationComposerScreenState extends ConsumerState<NotificationCompose
                               height: 20,
                               decoration: const BoxDecoration(
                                 color: Colors.black,
-                                borderRadius: BorderRadius.only(bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
+                                borderRadius: BorderRadius.only(
+                                  bottomLeft: Radius.circular(10),
+                                  bottomRight: Radius.circular(10),
+                                ),
                               ),
                             ),
                           ),
@@ -461,7 +636,11 @@ class _NotificationComposerScreenState extends ConsumerState<NotificationCompose
                             left: 10,
                             right: 10,
                             child: ListenableBuilder(
-                              listenable: Listenable.merge([_titleController, _messageController, _imageUrlController]),
+                              listenable: Listenable.merge([
+                                _titleController,
+                                _messageController,
+                                _imageUrlController,
+                              ]),
                               builder: (context, _) {
                                 return Container(
                                   padding: const EdgeInsets.all(12),
@@ -469,54 +648,92 @@ class _NotificationComposerScreenState extends ConsumerState<NotificationCompose
                                     color: Colors.grey[100],
                                     borderRadius: BorderRadius.circular(16),
                                     boxShadow: [
-                                      BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 10, spreadRadius: 1)
+                                      BoxShadow(
+                                        color: Colors.black.withValues(
+                                          alpha: 0.1,
+                                        ),
+                                        blurRadius: 10,
+                                        spreadRadius: 1,
+                                      ),
                                     ],
                                   ),
                                   child: Row(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Container(
                                         width: 40,
                                         height: 40,
-                                        decoration: BoxDecoration(color: AppColors.primary, borderRadius: BorderRadius.circular(8)),
-                                        child: const Icon(Icons.notifications, color: Colors.white),
+                                        decoration: BoxDecoration(
+                                          color: AppColors.primary,
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
+                                        ),
+                                        child: const Icon(
+                                          Icons.notifications,
+                                          color: Colors.white,
+                                        ),
                                       ),
                                       const SizedBox(width: 12),
                                       Expanded(
                                         child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                              _titleController.text.isEmpty ? 'Notification Title' : _titleController.text,
-                                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                                              _titleController.text.isEmpty
+                                                  ? 'Notification Title'
+                                                  : _titleController.text,
+                                              style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 14,
+                                              ),
                                             ),
                                             const SizedBox(height: 4),
                                             Text(
-                                              _messageController.text.isEmpty ? 'Notification message body will appear here.' : _messageController.text,
-                                              style: const TextStyle(fontSize: 12, color: Colors.black87),
+                                              _messageController.text.isEmpty
+                                                  ? 'Notification message body will appear here.'
+                                                  : _messageController.text,
+                                              style: const TextStyle(
+                                                fontSize: 12,
+                                                color: Colors.black87,
+                                              ),
                                             ),
-                                            if (_imageUrlController.text.isNotEmpty) ...[
+                                            if (_imageUrlController
+                                                .text
+                                                .isNotEmpty) ...[
                                               const SizedBox(height: 8),
                                               ClipRRect(
-                                                borderRadius: BorderRadius.circular(8),
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
                                                 child: Image.network(
                                                   _imageUrlController.text,
                                                   height: 100,
                                                   width: double.infinity,
                                                   fit: BoxFit.cover,
-                                                  errorBuilder: (_, __, ___) => Container(height: 100, color: Colors.grey[300], child: const Center(child: Icon(Icons.broken_image))),
+                                                  errorBuilder: (_, _, _) =>
+                                                      Container(
+                                                        height: 100,
+                                                        color: Colors.grey[300],
+                                                        child: const Center(
+                                                          child: Icon(
+                                                            Icons.broken_image,
+                                                          ),
+                                                        ),
+                                                      ),
                                                 ),
-                                              )
-                                            ]
+                                              ),
+                                            ],
                                           ],
                                         ),
                                       ),
                                     ],
                                   ),
                                 );
-                              }
+                              },
                             ),
-                          )
+                          ),
                         ],
                       ),
                     ),
@@ -533,7 +750,14 @@ class _NotificationComposerScreenState extends ConsumerState<NotificationCompose
   Widget _buildSectionHeader(String title) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12.0),
-      child: Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.primary)),
+      child: Text(
+        title,
+        style: const TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+          color: AppColors.primary,
+        ),
+      ),
     );
   }
 }

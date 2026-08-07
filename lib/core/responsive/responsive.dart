@@ -35,7 +35,7 @@ class Responsive extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
-    
+
     if (size.width > 1200) {
       return desktop;
     } else if (size.width >= 992) {

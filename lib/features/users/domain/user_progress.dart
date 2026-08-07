@@ -25,9 +25,12 @@ class UserProgress {
       currentWeek: data['currentWeek'] as int? ?? 1,
       currentDay: data['currentDay'] as int? ?? 1,
       dayStreak: (data['dayStreak'] as num?)?.toInt() ?? 0,
-      completionPercentage: (data['completionPercentage'] as num?)?.toDouble() ?? 0.0,
+      completionPercentage:
+          (data['completionPercentage'] as num?)?.toDouble() ?? 0.0,
       completedLessons: (data['completedLessons'] is List)
-          ? (data['completedLessons'] as List<dynamic>).map((e) => e.toString()).toList()
+          ? (data['completedLessons'] as List<dynamic>)
+                .map((e) => e.toString())
+                .toList()
           : [],
       lastCompletedAt: (data['lastCompletedAt'] as Timestamp?)?.toDate(),
     );

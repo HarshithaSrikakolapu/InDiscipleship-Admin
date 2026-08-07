@@ -22,20 +22,26 @@ class NotificationRepositoryImpl implements NotificationRepository {
     return _notificationsRef
         .orderBy('createdAt', descending: true)
         .snapshots()
-        .map((snapshot) => snapshot.docs
-            .map((doc) => NotificationModel.fromFirestore(doc.data(), doc.id))
-            .toList());
+        .map(
+          (snapshot) => snapshot.docs
+              .map((doc) => NotificationModel.fromFirestore(doc.data(), doc.id))
+              .toList(),
+        );
   }
 
   @override
-  Stream<List<NotificationModel>> getRecentNotificationsStream({int limit = 5}) {
+  Stream<List<NotificationModel>> getRecentNotificationsStream({
+    int limit = 5,
+  }) {
     return _notificationsRef
         .orderBy('createdAt', descending: true)
         .limit(limit)
         .snapshots()
-        .map((snapshot) => snapshot.docs
-            .map((doc) => NotificationModel.fromFirestore(doc.data(), doc.id))
-            .toList());
+        .map(
+          (snapshot) => snapshot.docs
+              .map((doc) => NotificationModel.fromFirestore(doc.data(), doc.id))
+              .toList(),
+        );
   }
 
   @override
@@ -63,7 +69,9 @@ class NotificationRepositoryImpl implements NotificationRepository {
 
   @override
   Future<void> updateNotification(NotificationModel notification) async {
-    await _notificationsRef.doc(notification.id).set(notification.toMap(), SetOptions(merge: true));
+    await _notificationsRef
+        .doc(notification.id)
+        .set(notification.toMap(), SetOptions(merge: true));
   }
 
   @override

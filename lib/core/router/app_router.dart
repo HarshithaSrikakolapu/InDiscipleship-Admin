@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../features/auth/presentation/login_screen.dart';
@@ -25,12 +26,25 @@ import '../../features/notifications/presentation/notification_details_screen.da
 import '../../features/notifications/domain/notification_model.dart';
 import '../../features/reminders/presentation/reminders_screen.dart';
 
+class RouterNotifier extends ChangeNotifier {
+  final Ref ref;
+
+  RouterNotifier(this.ref) {
+    ref.listen(authStateProvider, (previous, next) {
+      notifyListeners();
+    });
+  }
+}
+
 final routerProvider = Provider<GoRouter>((ref) {
-  final authState = ref.watch(authStateProvider);
+  final notifier = RouterNotifier(ref);
 
   return GoRouter(
     initialLocation: '/dashboard',
+    refreshListenable: notifier,
     redirect: (context, state) {
+      final authState = ref.read(authStateProvider);
+
       if (authState.isLoading || authState.hasError) return null;
 
       final isAuth = authState.value != null;
@@ -40,17 +54,15 @@ final routerProvider = Provider<GoRouter>((ref) {
         return '/login';
       }
 
-      if (isAuth && isLoggingIn) {
-        return '/dashboard';
-      }
-
+      // We don't automatically redirect to /dashboard if they are on /login.
+      // This allows the LoginScreen to verify their admin status in Firestore first,
+      // and then manually route them to /dashboard if successful.
+      // Otherwise, the router kicks them to the dashboard while the admin check
+      // is still running in the background, leading to sudden logouts!
       return null;
     },
     routes: [
-      GoRoute(
-        path: '/login',
-        builder: (context, state) => const LoginScreen(),
-      ),
+      GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {
           return MainLayout(navigationShell: navigationShell);
@@ -131,7 +143,8 @@ final routerProvider = Provider<GoRouter>((ref) {
                   ),
                   GoRoute(
                     path: '/reports/engagement',
-                    builder: (context, state) => const ReportsEngagementScreen(),
+                    builder: (context, state) =>
+                        const ReportsEngagementScreen(),
                   ),
                   GoRoute(
                     path: '/reports/exports',
@@ -155,7 +168,9 @@ final routerProvider = Provider<GoRouter>((ref) {
                 routes: [
                   GoRoute(
                     path: 'lessons',
-                    builder: (context, state) => const LessonListScreen(filterMode: LessonFilterMode.all),
+                    builder: (context, state) => const LessonListScreen(
+                      filterMode: LessonFilterMode.all,
+                    ),
                     routes: [
                       GoRoute(
                         path: 'create',
@@ -172,11 +187,15 @@ final routerProvider = Provider<GoRouter>((ref) {
                   ),
                   GoRoute(
                     path: 'published',
-                    builder: (context, state) => const LessonListScreen(filterMode: LessonFilterMode.published),
+                    builder: (context, state) => const LessonListScreen(
+                      filterMode: LessonFilterMode.published,
+                    ),
                   ),
                   GoRoute(
                     path: 'drafts',
-                    builder: (context, state) => const LessonListScreen(filterMode: LessonFilterMode.draft),
+                    builder: (context, state) => const LessonListScreen(
+                      filterMode: LessonFilterMode.draft,
+                    ),
                   ),
                   GoRoute(
                     path: 'import',
@@ -195,7 +214,8 @@ final routerProvider = Provider<GoRouter>((ref) {
                 routes: [
                   GoRoute(
                     path: 'create',
-                    builder: (context, state) => const NotificationComposerScreen(),
+                    builder: (context, state) =>
+                        const NotificationComposerScreen(),
                   ),
                   GoRoute(
                     path: ':id',

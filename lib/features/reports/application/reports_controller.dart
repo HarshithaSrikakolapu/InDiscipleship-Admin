@@ -60,19 +60,25 @@ class ReportsController extends AsyncNotifier<ReportsState> {
   Future<void> updateDateRange(DateTime? startDate, DateTime? endDate) async {
     state = const AsyncValue.loading();
     try {
-      final newState = await _fetchReports(startDate: startDate, endDate: endDate);
+      final newState = await _fetchReports(
+        startDate: startDate,
+        endDate: endDate,
+      );
       state = AsyncValue.data(newState);
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
     }
   }
-  
+
   Future<void> refresh() async {
     final currentState = state.value;
     await updateDateRange(currentState?.startDate, currentState?.endDate);
   }
 
-  Future<ReportsState> _fetchReports({DateTime? startDate, DateTime? endDate}) async {
+  Future<ReportsState> _fetchReports({
+    DateTime? startDate,
+    DateTime? endDate,
+  }) async {
     final repo = ref.read(reportsRepositoryProvider);
 
     final results = await Future.wait([
@@ -84,10 +90,14 @@ class ReportsController extends AsyncNotifier<ReportsState> {
     ]);
 
     // registration trend needs specific start/end to be meaningful, or defaults to 30 days
-    final finalStartDate = startDate ?? DateTime.now().subtract(const Duration(days: 30));
+    final finalStartDate =
+        startDate ?? DateTime.now().subtract(const Duration(days: 30));
     final finalEndDate = endDate ?? DateTime.now();
-    
-    final trends = await repo.getRegistrationTrends(startDate: finalStartDate, endDate: finalEndDate);
+
+    final trends = await repo.getRegistrationTrends(
+      startDate: finalStartDate,
+      endDate: finalEndDate,
+    );
 
     return ReportsState(
       userGrowthSummary: results[0] as UserGrowthSummary,
@@ -102,6 +112,7 @@ class ReportsController extends AsyncNotifier<ReportsState> {
   }
 }
 
-final reportsControllerProvider = AsyncNotifierProvider<ReportsController, ReportsState>(() {
-  return ReportsController();
-});
+final reportsControllerProvider =
+    AsyncNotifierProvider<ReportsController, ReportsState>(() {
+      return ReportsController();
+    });

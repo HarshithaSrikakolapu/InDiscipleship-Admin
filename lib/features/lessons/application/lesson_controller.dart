@@ -78,7 +78,8 @@ class LessonController extends Notifier<LessonState> {
     if (lesson.bibleVerse.trim().isEmpty) {
       throw Exception('Bible Verse is required');
     }
-    if (lesson.connect.isEmpty || lesson.connect.every((e) => e.trim().isEmpty)) {
+    if (lesson.connect.isEmpty ||
+        lesson.connect.every((e) => e.trim().isEmpty)) {
       throw Exception('At least one Connect item is required');
     }
     if (lesson.discover.isEmpty ||
@@ -112,7 +113,8 @@ class LessonController extends Notifier<LessonState> {
         final startMs = DateTime.now().millisecondsSinceEpoch;
         final bytes = result.files.single.bytes!;
         final fileName = result.files.single.name;
-        final extension = result.files.single.extension?.toLowerCase() ?? 'unknown';
+        final extension =
+            result.files.single.extension?.toLowerCase() ?? 'unknown';
 
         List<LessonModel> lessonsToImport = [];
 
@@ -152,12 +154,13 @@ class LessonController extends Notifier<LessonState> {
 
             List<String> parseList(dynamic value) {
               if (value == null || value.toString().isEmpty) return [];
-              if (value is String)
+              if (value is String) {
                 return value
                     .split('|')
                     .map((e) => e.trim())
                     .where((e) => e.isNotEmpty)
                     .toList();
+              }
               return [value.toString()];
             }
 
@@ -195,34 +198,36 @@ class LessonController extends Notifier<LessonState> {
 
         // Fetch existing IDs to calculate stats
         final existingIds = await _repository.getAllLessonIds();
-        
+
         int created = 0;
         int updated = 0;
         int skipped = 0;
-        int failed = 0; // Set to 0 since batch import will fail wholesale if one fails, or we can just assume all succeed. 
-        
+        int failed =
+            0; // Set to 0 since batch import will fail wholesale if one fails, or we can just assume all succeed.
+
         for (var lesson in lessonsToImport) {
-           // If we don't have a reliable lessonId locally yet, the repository will generate it as 'week01_day01'. 
-           // Let's generate it here to check accurately.
-           final docId = 'week${lesson.week.toString().padLeft(2, '0')}_day${lesson.day.toString().padLeft(2, '0')}';
-           if (existingIds.contains(docId)) {
-             updated++;
-           } else {
-             created++;
-           }
+          // If we don't have a reliable lessonId locally yet, the repository will generate it as 'week01_day01'.
+          // Let's generate it here to check accurately.
+          final docId =
+              'week${lesson.week.toString().padLeft(2, '0')}_day${lesson.day.toString().padLeft(2, '0')}';
+          if (existingIds.contains(docId)) {
+            updated++;
+          } else {
+            created++;
+          }
         }
 
         state = state.copyWith(importProgress: 0.6);
 
         await _repository.batchImportLessons(lessonsToImport);
-        
+
         state = state.copyWith(importProgress: 0.9);
 
         final endMs = DateTime.now().millisecondsSinceEpoch;
-        
+
         // Save audit log
         try {
-          // We need authProvider to get current user, but since we are in a notifier, we might not have direct access. 
+          // We need authProvider to get current user, but since we are in a notifier, we might not have direct access.
           // Let's just use 'Admin' for now, or read it if we can.
           // For simplicity in refactor, we use 'Admin' as requested for now.
           await _repository.saveImportHistory(
@@ -238,10 +243,10 @@ class LessonController extends Notifier<LessonState> {
               failedRecords: failed,
               durationMs: endMs - startMs,
               status: 'Success',
-            )
+            ),
           );
         } catch (e) {
-          print('Failed to save import history: $e');
+          // Failed to save import history
         }
 
         state = state.copyWith(isImporting: false, importProgress: 1.0);
@@ -262,16 +267,16 @@ class LessonController extends Notifier<LessonState> {
         final List<Map<String, dynamic>> jsonList = lessons
             .map((l) => l.toJson())
             .toList();
-            
+
         final encoder = JsonEncoder.withIndent('  ', (dynamic item) {
           if (item is Timestamp) {
             return item.toDate().toIso8601String();
           }
           return item.toString();
         });
-        
+
         final jsonString = encoder.convert(jsonList);
-        
+
         WebDownloadHelper.downloadStringAsFile(
           jsonString,
           'lessons_export.json',

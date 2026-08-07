@@ -9,7 +9,10 @@ final mentorsStreamProvider = StreamProvider<List<AppUser>>((ref) {
   return repository.getMentorsStream();
 });
 
-final assignedUsersProvider = StreamProvider.family<List<AppUser>, String>((ref, mentorId) {
+final assignedUsersProvider = StreamProvider.family<List<AppUser>, String>((
+  ref,
+  mentorId,
+) {
   final repository = ref.watch(mentorRepositoryProvider);
   return repository.getAssignedUsersStream(mentorId);
 });
@@ -57,15 +60,17 @@ class MentorController extends AsyncNotifier<void> {
     state = const AsyncLoading();
     try {
       final repository = ref.read(mentorRepositoryProvider);
-      
+
       // Verification check (must not have assigned users)
       // This is ideally checked on the UI or backend, but we'll enforce here as well.
       final assignedStream = repository.getAssignedUsersStream(uid);
       final assignedUsers = await assignedStream.first;
       if (assignedUsers.isNotEmpty) {
-        throw Exception('This mentor still has assigned disciples. Please reassign them before removing the mentor role.');
+        throw Exception(
+          'This mentor still has assigned disciples. Please reassign them before removing the mentor role.',
+        );
       }
-      
+
       await repository.removeMentorRole(uid);
       state = const AsyncData(null);
     } catch (e, st) {
@@ -83,7 +88,7 @@ class MentorController extends AsyncNotifier<void> {
       state = AsyncError(e, st);
     }
   }
-  
+
   Future<void> removeUserFromMentor(String userId) async {
     state = const AsyncLoading();
     try {
@@ -96,6 +101,7 @@ class MentorController extends AsyncNotifier<void> {
   }
 }
 
-final mentorControllerProvider = AsyncNotifierProvider.autoDispose<MentorController, void>(() {
-  return MentorController();
-});
+final mentorControllerProvider =
+    AsyncNotifierProvider.autoDispose<MentorController, void>(() {
+      return MentorController();
+    });

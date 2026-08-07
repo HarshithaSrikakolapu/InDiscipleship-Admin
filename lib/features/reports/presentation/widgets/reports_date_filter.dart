@@ -10,7 +10,7 @@ class ReportsDateFilter extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     // In a full implementation, we would show the currently selected range.
     // For now, we just provide a dropdown that updates the controller.
-    
+
     return PopupMenuButton<String>(
       onSelected: (value) => _handleSelection(value, ref, context),
       child: Container(
@@ -23,11 +23,19 @@ class ReportsDateFilter extends ConsumerWidget {
         child: const Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.calendar_today, size: 18, color: AppColors.textSecondary),
+            Icon(
+              Icons.calendar_today,
+              size: 18,
+              color: AppColors.textSecondary,
+            ),
             SizedBox(width: 8),
             Text('Date Range', style: TextStyle(color: AppColors.textPrimary)),
             SizedBox(width: 8),
-            Icon(Icons.arrow_drop_down, size: 20, color: AppColors.textSecondary),
+            Icon(
+              Icons.arrow_drop_down,
+              size: 20,
+              color: AppColors.textSecondary,
+            ),
           ],
         ),
       ),
@@ -43,7 +51,11 @@ class ReportsDateFilter extends ConsumerWidget {
     );
   }
 
-  Future<void> _handleSelection(String value, WidgetRef ref, BuildContext context) async {
+  Future<void> _handleSelection(
+    String value,
+    WidgetRef ref,
+    BuildContext context,
+  ) async {
     final now = DateTime.now();
     DateTime? start;
     DateTime? end = now;
@@ -76,7 +88,9 @@ class ReportsDateFilter extends ConsumerWidget {
         );
         if (range != null) {
           start = range.start;
-          end = range.end.add(const Duration(days: 1)).subtract(const Duration(milliseconds: 1));
+          end = range.end
+              .add(const Duration(days: 1))
+              .subtract(const Duration(milliseconds: 1));
         } else {
           return; // cancelled
         }

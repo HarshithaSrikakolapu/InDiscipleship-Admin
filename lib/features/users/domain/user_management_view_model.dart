@@ -6,11 +6,7 @@ class UserManagementViewModel {
   final UserProgress? progress;
   final AppUser? mentor;
 
-  UserManagementViewModel({
-    required this.user,
-    this.progress,
-    this.mentor,
-  });
+  UserManagementViewModel({required this.user, this.progress, this.mentor});
 
   bool get isDeleted => user.isDeleted;
   bool get isActive => user.accountStatus == AccountStatus.active;
@@ -23,9 +19,9 @@ class UserManagementViewModel {
   double get completionPercentage => progress?.completionPercentage ?? 0.0;
   int get completedLessons => progress?.completedLessonsCount ?? 0;
   DateTime? get lastCompletedAt => progress?.lastCompletedAt;
-  
+
   String get mentorName => mentor?.displayName ?? 'None';
-  
+
   UserManagementViewModel copyWith({
     AppUser? user,
     UserProgress? progress,

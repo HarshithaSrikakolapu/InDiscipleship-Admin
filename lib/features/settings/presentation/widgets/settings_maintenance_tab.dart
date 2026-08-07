@@ -9,16 +9,15 @@ import '../../../auth/data/auth_repository.dart';
 class SettingsMaintenanceTab extends ConsumerStatefulWidget {
   final MaintenanceSettings settings;
 
-  const SettingsMaintenanceTab({
-    super.key,
-    required this.settings,
-  });
+  const SettingsMaintenanceTab({super.key, required this.settings});
 
   @override
-  ConsumerState<SettingsMaintenanceTab> createState() => _SettingsMaintenanceTabState();
+  ConsumerState<SettingsMaintenanceTab> createState() =>
+      _SettingsMaintenanceTabState();
 }
 
-class _SettingsMaintenanceTabState extends ConsumerState<SettingsMaintenanceTab> {
+class _SettingsMaintenanceTabState
+    extends ConsumerState<SettingsMaintenanceTab> {
   final _formKey = GlobalKey<FormState>();
   late bool _enabled;
   late TextEditingController _messageController;
@@ -60,9 +59,7 @@ class _SettingsMaintenanceTabState extends ConsumerState<SettingsMaintenanceTab>
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(
-              primary: AppColors.primary,
-            ),
+            colorScheme: const ColorScheme.light(primary: AppColors.primary),
           ),
           child: child!,
         );
@@ -75,7 +72,9 @@ class _SettingsMaintenanceTabState extends ConsumerState<SettingsMaintenanceTab>
 
     final pickedTime = await showTimePicker(
       context: context,
-      initialTime: TimeOfDay.fromDateTime(_estimatedEndTime ?? now.add(const Duration(hours: 2))),
+      initialTime: TimeOfDay.fromDateTime(
+        _estimatedEndTime ?? now.add(const Duration(hours: 2)),
+      ),
     );
 
     if (pickedTime == null) return;
@@ -172,7 +171,11 @@ class _SettingsMaintenanceTabState extends ConsumerState<SettingsMaintenanceTab>
                         children: [
                           const Text(
                             'Maintenance Mode Status',
-                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.textPrimary,
+                            ),
                           ),
                           const SizedBox(height: 4),
                           Text(
@@ -180,16 +183,20 @@ class _SettingsMaintenanceTabState extends ConsumerState<SettingsMaintenanceTab>
                                 ? 'ON - Mobile application is locked for normal users.'
                                 : 'OFF - Mobile application is fully active.',
                             style: TextStyle(
-                              color: _enabled ? AppColors.warning : AppColors.textSecondary,
+                              color: _enabled
+                                  ? AppColors.warning
+                                  : AppColors.textSecondary,
                               fontSize: 14,
-                              fontWeight: _enabled ? FontWeight.bold : FontWeight.normal,
+                              fontWeight: _enabled
+                                  ? FontWeight.bold
+                                  : FontWeight.normal,
                             ),
                           ),
                         ],
                       ),
                       Switch(
                         value: _enabled,
-                        activeColor: AppColors.warning,
+                        activeThumbColor: AppColors.warning,
                         onChanged: (val) {
                           setState(() {
                             _enabled = val;
@@ -205,15 +212,27 @@ class _SettingsMaintenanceTabState extends ConsumerState<SettingsMaintenanceTab>
                     TextFormField(
                       controller: _messageController,
                       maxLines: 4,
-                      style: const TextStyle(color: AppColors.textPrimary, fontSize: 15),
+                      style: const TextStyle(
+                        color: AppColors.textPrimary,
+                        fontSize: 15,
+                      ),
                       decoration: InputDecoration(
                         labelText: 'Maintenance Message',
-                        labelStyle: const TextStyle(color: AppColors.textSecondary, fontSize: 14),
-                        hintText: 'e.g. The application is currently under maintenance. Please try again later.',
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                        labelStyle: const TextStyle(
+                          color: AppColors.textSecondary,
+                          fontSize: 14,
+                        ),
+                        hintText:
+                            'e.g. The application is currently under maintenance. Please try again later.',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(color: AppColors.primary, width: 2),
+                          borderSide: const BorderSide(
+                            color: AppColors.primary,
+                            width: 2,
+                          ),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
@@ -226,14 +245,21 @@ class _SettingsMaintenanceTabState extends ConsumerState<SettingsMaintenanceTab>
                     const SizedBox(height: 24),
                     const Text(
                       'Estimated Completion (Optional)',
-                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textPrimary,
+                      ),
                     ),
                     const SizedBox(height: 12),
                     Row(
                       children: [
                         Expanded(
                           child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 16,
+                            ),
                             decoration: BoxDecoration(
                               color: AppColors.background,
                               border: Border.all(color: AppColors.border),
@@ -241,10 +267,14 @@ class _SettingsMaintenanceTabState extends ConsumerState<SettingsMaintenanceTab>
                             ),
                             child: Text(
                               _estimatedEndTime != null
-                                  ? DateFormat('EEEE, MMMM d, y - h:mm a').format(_estimatedEndTime!)
+                                  ? DateFormat(
+                                      'EEEE, MMMM d, y - h:mm a',
+                                    ).format(_estimatedEndTime!)
                                   : 'No completion time set',
                               style: TextStyle(
-                                color: _estimatedEndTime != null ? AppColors.textPrimary : AppColors.textSecondary,
+                                color: _estimatedEndTime != null
+                                    ? AppColors.textPrimary
+                                    : AppColors.textSecondary,
                                 fontSize: 15,
                               ),
                             ),
@@ -259,8 +289,13 @@ class _SettingsMaintenanceTabState extends ConsumerState<SettingsMaintenanceTab>
                             backgroundColor: Colors.white,
                             foregroundColor: AppColors.primary,
                             side: const BorderSide(color: AppColors.primary),
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 16,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
                           ),
                         ),
                         if (_estimatedEndTime != null) ...[
@@ -272,8 +307,13 @@ class _SettingsMaintenanceTabState extends ConsumerState<SettingsMaintenanceTab>
                             style: OutlinedButton.styleFrom(
                               foregroundColor: AppColors.danger,
                               side: const BorderSide(color: AppColors.danger),
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 16,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
                             ),
                           ),
                         ],
@@ -291,7 +331,10 @@ class _SettingsMaintenanceTabState extends ConsumerState<SettingsMaintenanceTab>
               if (widget.settings.updatedBy.isNotEmpty)
                 Text(
                   'Last updated by ${widget.settings.updatedBy}',
-                  style: const TextStyle(color: AppColors.textSecondary, fontSize: 13),
+                  style: const TextStyle(
+                    color: AppColors.textSecondary,
+                    fontSize: 13,
+                  ),
                 )
               else
                 const SizedBox.shrink(),
@@ -301,15 +344,23 @@ class _SettingsMaintenanceTabState extends ConsumerState<SettingsMaintenanceTab>
                     ? const SizedBox(
                         width: 16,
                         height: 16,
-                        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
                       )
                     : const Icon(Icons.save),
                 label: const Text('Save Maintenance Settings'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary,
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 16,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                 ),
               ),
             ],

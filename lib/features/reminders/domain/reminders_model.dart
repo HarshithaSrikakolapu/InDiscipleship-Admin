@@ -27,7 +27,12 @@ class ReminderConfig {
     );
   }
 
-  factory ReminderConfig.fromMap(Map<String, dynamic> map, {required String defaultTitle, required String defaultMsg, required String defaultTimeVal}) {
+  factory ReminderConfig.fromMap(
+    Map<String, dynamic> map, {
+    required String defaultTitle,
+    required String defaultMsg,
+    required String defaultTimeVal,
+  }) {
     return ReminderConfig(
       enabled: map['enabled'] ?? false,
       title: map['title'] ?? defaultTitle,
@@ -45,7 +50,11 @@ class ReminderConfig {
     };
   }
 
-  factory ReminderConfig.empty({required String title, required String message, required String defaultTime}) {
+  factory ReminderConfig.empty({
+    required String title,
+    required String message,
+    required String defaultTime,
+  }) {
     return ReminderConfig(
       enabled: false,
       title: title,

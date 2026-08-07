@@ -25,9 +25,9 @@ class ReportsDashboardScreen extends ConsumerWidget {
                 if (summary == null) {
                   return const Center(child: Text('No data available.'));
                 }
-                
+
                 final totalCountries = state.locationReports?.length ?? 0;
-                
+
                 return SingleChildScrollView(
                   padding: const EdgeInsets.all(24.0),
                   child: Column(
@@ -36,7 +36,9 @@ class ReportsDashboardScreen extends ConsumerWidget {
                       _buildKpiGrid(summary, totalCountries),
                       const SizedBox(height: 24),
                       if (state.registrationTrends != null)
-                        RegistrationTrendChart(trends: state.registrationTrends!),
+                        RegistrationTrendChart(
+                          trends: state.registrationTrends!,
+                        ),
                     ],
                   ),
                 );
@@ -73,8 +75,10 @@ class ReportsDashboardScreen extends ConsumerWidget {
   Widget _buildKpiGrid(dynamic summary, int totalCountries) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        int crossAxisCount = constraints.maxWidth > 1200 ? 4 : (constraints.maxWidth > 800 ? 3 : 2);
-        
+        int crossAxisCount = constraints.maxWidth > 1200
+            ? 4
+            : (constraints.maxWidth > 800 ? 3 : 2);
+
         return GridView.count(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),

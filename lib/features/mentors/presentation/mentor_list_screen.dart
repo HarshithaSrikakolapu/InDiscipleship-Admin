@@ -31,16 +31,23 @@ class _MentorListScreenState extends ConsumerState<MentorListScreen> {
             child: mentorsAsync.when(
               data: (mentors) {
                 final filteredMentors = mentors.where((m) {
-                  final matchesSearch = m.displayName.toLowerCase().contains(_searchQuery.toLowerCase());
-                  final matchesStatus = _statusFilter == 'All Statuses' ||
-                      (_statusFilter == 'Active' && m.mentorStatus == 'active') ||
-                      (_statusFilter == 'Suspended' && m.mentorStatus == 'suspended');
+                  final matchesSearch = m.displayName.toLowerCase().contains(
+                    _searchQuery.toLowerCase(),
+                  );
+                  final matchesStatus =
+                      _statusFilter == 'All Statuses' ||
+                      (_statusFilter == 'Active' &&
+                          m.mentorStatus == 'active') ||
+                      (_statusFilter == 'Suspended' &&
+                          m.mentorStatus == 'suspended');
                   return matchesSearch && matchesStatus;
                 }).toList();
 
                 return Card(
                   margin: const EdgeInsets.all(24),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                   elevation: 0,
                   child: Column(
                     children: [
@@ -52,7 +59,8 @@ class _MentorListScreenState extends ConsumerState<MentorListScreen> {
                             : ListView.separated(
                                 padding: const EdgeInsets.all(0),
                                 itemCount: filteredMentors.length,
-                                separatorBuilder: (context, index) => const Divider(height: 1),
+                                separatorBuilder: (context, index) =>
+                                    const Divider(height: 1),
                                 itemBuilder: (context, index) {
                                   final mentor = filteredMentors[index];
                                   return _buildMentorRow(context, mentor);
@@ -114,8 +122,13 @@ class _MentorListScreenState extends ConsumerState<MentorListScreen> {
               decoration: InputDecoration(
                 hintText: 'Search mentors...',
                 prefixIcon: const Icon(Icons.search),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-                contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                contentPadding: const EdgeInsets.symmetric(
+                  vertical: 0,
+                  horizontal: 16,
+                ),
               ),
               onChanged: (val) => setState(() => _searchQuery = val),
             ),
@@ -147,14 +160,25 @@ class _MentorListScreenState extends ConsumerState<MentorListScreen> {
           OutlinedButton.icon(
             onPressed: () {
               if (currentMentors.isEmpty) return;
-              final rows = currentMentors.map((m) => [
-                m.displayName,
-                m.country ?? 'Unknown',
-                m.mentorStatus ?? 'Unknown',
-                m.mentorSince != null ? DateFormat('yyyy-MM-dd').format(m.mentorSince!) : 'Unknown',
-              ]).toList();
-              
-              ExportHelper.exportToCsv('Mentors Export', ['Name', 'Country', 'Status', 'Mentor Since'], rows);
+              final rows = currentMentors
+                  .map(
+                    (m) => [
+                      m.displayName,
+                      m.country ?? 'Unknown',
+                      m.mentorStatus ?? 'Unknown',
+                      m.mentorSince != null
+                          ? DateFormat('yyyy-MM-dd').format(m.mentorSince!)
+                          : 'Unknown',
+                    ],
+                  )
+                  .toList();
+
+              ExportHelper.exportToCsv('Mentors Export', [
+                'Name',
+                'Country',
+                'Status',
+                'Mentor Since',
+              ], rows);
             },
             icon: const Icon(Icons.download),
             label: const Text('Export'),
@@ -166,7 +190,7 @@ class _MentorListScreenState extends ConsumerState<MentorListScreen> {
 
   Widget _buildMentorRow(BuildContext context, dynamic mentor) {
     final bool isActive = mentor.mentorStatus == 'active';
-    
+
     return InkWell(
       onTap: () {
         context.go('/mentors/${mentor.uid}');
@@ -178,8 +202,13 @@ class _MentorListScreenState extends ConsumerState<MentorListScreen> {
             CircleAvatar(
               backgroundColor: Colors.blue.shade50,
               child: Text(
-                mentor.displayName.isNotEmpty ? mentor.displayName[0].toUpperCase() : '?',
-                style: TextStyle(color: Colors.blue.shade700, fontWeight: FontWeight.bold),
+                mentor.displayName.isNotEmpty
+                    ? mentor.displayName[0].toUpperCase()
+                    : '?',
+                style: TextStyle(
+                  color: Colors.blue.shade700,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
             const SizedBox(width: 16),
@@ -188,18 +217,26 @@ class _MentorListScreenState extends ConsumerState<MentorListScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(mentor.displayName, style: const TextStyle(fontWeight: FontWeight.bold)),
+                  Text(
+                    mentor.displayName,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
                 ],
               ),
             ),
             Expanded(
               flex: 1,
-              child: Text(mentor.country ?? 'N/A', style: TextStyle(color: Colors.grey.shade600)),
+              child: Text(
+                mentor.country ?? 'N/A',
+                style: TextStyle(color: Colors.grey.shade600),
+              ),
             ),
             Expanded(
               flex: 1,
               child: Text(
-                mentor.mentorSince != null ? DateFormat('MMM d, yyyy').format(mentor.mentorSince!) : 'Unknown',
+                mentor.mentorSince != null
+                    ? DateFormat('MMM d, yyyy').format(mentor.mentorSince!)
+                    : 'Unknown',
                 style: TextStyle(color: Colors.grey.shade600),
               ),
             ),
@@ -208,15 +245,22 @@ class _MentorListScreenState extends ConsumerState<MentorListScreen> {
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
-                    color: isActive ? Colors.green.shade50 : Colors.orange.shade50,
+                    color: isActive
+                        ? Colors.green.shade50
+                        : Colors.orange.shade50,
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Text(
                     isActive ? 'Active' : 'Suspended',
                     style: TextStyle(
-                      color: isActive ? Colors.green.shade700 : Colors.orange.shade700,
+                      color: isActive
+                          ? Colors.green.shade700
+                          : Colors.orange.shade700,
                       fontWeight: FontWeight.bold,
                       fontSize: 12,
                     ),

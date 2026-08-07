@@ -19,19 +19,32 @@ class AdminRepository {
     try {
       final doc = await _firestore.collection('admins').doc(uid).get();
       if (doc.exists && doc.data() != null) {
-        return AdminUser.fromFirestore(doc.data()!, doc.id);
+        final data = doc.data()!;
+        return AdminUser.fromFirestore(data, doc.id);
       }
       return null;
     } catch (e) {
-      return null;
+      throw Exception('Failed to fetch admin doc: $e');
     }
   }
 
   Future<bool> verifyAdminStatus(String uid) async {
     final adminUser = await getAdmin(uid);
     if (adminUser != null) {
-      return adminUser.role == 'admin' && adminUser.isActive;
+      if (adminUser.role != 'admin') {
+        throw Exception(
+          "Access denied: User role is '${adminUser.role}', expected 'admin'.",
+        );
+      }
+      if (adminUser.isActive != true) {
+        throw Exception(
+          "Access denied: Account is not marked as active (isActive = ${adminUser.isActive}).",
+        );
+      }
+      return true;
     }
-    return false;
+    throw Exception(
+      "Access denied: No document found in 'admins' collection for your UID ($uid). Please ensure the document ID exactly matches your Auth UID.",
+    );
   }
 }

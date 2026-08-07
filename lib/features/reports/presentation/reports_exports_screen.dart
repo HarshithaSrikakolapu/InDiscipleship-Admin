@@ -28,7 +28,10 @@ class ReportsExportsScreen extends ConsumerWidget {
                     children: [
                       const Text(
                         'Available Exports',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       const SizedBox(height: 24),
                       Wrap(
@@ -38,35 +41,60 @@ class ReportsExportsScreen extends ConsumerWidget {
                           _buildExportCard(
                             context: context,
                             title: 'Lesson Engagement',
-                            description: 'Export started vs completed stats for all lessons.',
+                            description:
+                                'Export started vs completed stats for all lessons.',
                             icon: Icons.menu_book,
                             onExportCsv: () {
-                              if (state.lessonEngagement == null || state.lessonEngagement!.isEmpty) return;
-                              final rows = state.lessonEngagement!.map((e) => [
-                                e.lessonTitle,
-                                e.startedCount,
-                                e.completedCount,
-                                '${e.completionRate.toStringAsFixed(1)}%'
-                              ]).toList();
+                              if (state.lessonEngagement == null ||
+                                  state.lessonEngagement!.isEmpty) {
+                                return;
+                              }
+                              final rows = state.lessonEngagement!
+                                  .map(
+                                    (e) => [
+                                      e.lessonTitle,
+                                      e.startedCount,
+                                      e.completedCount,
+                                      '${e.completionRate.toStringAsFixed(1)}%',
+                                    ],
+                                  )
+                                  .toList();
                               ExportHelper.exportToCsv(
                                 'Lesson Engagement Report',
-                                ['Lesson Title', 'Started', 'Completed', 'Completion Rate'],
+                                [
+                                  'Lesson Title',
+                                  'Started',
+                                  'Completed',
+                                  'Completion Rate',
+                                ],
                                 rows,
                                 startDate: state.startDate,
                                 endDate: state.endDate,
                               );
                             },
                             onExportExcel: () {
-                              if (state.lessonEngagement == null || state.lessonEngagement!.isEmpty) return;
-                              final rows = state.lessonEngagement!.map((e) => [
-                                e.lessonTitle,
-                                e.startedCount,
-                                e.completedCount,
-                                e.completionRate
-                              ]).toList();
+                              if (state.lessonEngagement == null ||
+                                  state.lessonEngagement!.isEmpty) {
+                                return;
+                              }
+                              final rows = state.lessonEngagement!
+                                  .map(
+                                    (e) => [
+                                      e.lessonTitle,
+                                      e.startedCount,
+                                      e.completedCount,
+                                      e.completionRate,
+                                    ],
+                                  )
+                                  .toList();
                               ExportHelper.exportToExcel(
                                 'Lesson Engagement Report',
-                                ['Lesson Title', 'Started', 'Completed', 'Completion Rate'],
+                                [
+                                  'Lesson Title',
+                                  'Started',
+                                  'Completed',
+                                  'Completion Rate',
+                                ],
                                 rows,
                                 startDate: state.startDate,
                                 endDate: state.endDate,
@@ -76,15 +104,23 @@ class ReportsExportsScreen extends ConsumerWidget {
                           _buildExportCard(
                             context: context,
                             title: 'Geography (Locations)',
-                            description: 'Export user counts and distribution by country.',
+                            description:
+                                'Export user counts and distribution by country.',
                             icon: Icons.public,
                             onExportCsv: () {
-                              if (state.locationReports == null || state.locationReports!.isEmpty) return;
-                              final rows = state.locationReports!.map((e) => [
-                                e.country,
-                                e.userCount,
-                                '${e.percentage.toStringAsFixed(1)}%'
-                              ]).toList();
+                              if (state.locationReports == null ||
+                                  state.locationReports!.isEmpty) {
+                                return;
+                              }
+                              final rows = state.locationReports!
+                                  .map(
+                                    (e) => [
+                                      e.country,
+                                      e.userCount,
+                                      '${e.percentage.toStringAsFixed(1)}%',
+                                    ],
+                                  )
+                                  .toList();
                               ExportHelper.exportToCsv(
                                 'Geography Report',
                                 ['Country', 'Users', 'Percentage'],
@@ -94,12 +130,19 @@ class ReportsExportsScreen extends ConsumerWidget {
                               );
                             },
                             onExportExcel: () {
-                              if (state.locationReports == null || state.locationReports!.isEmpty) return;
-                              final rows = state.locationReports!.map((e) => [
-                                e.country,
-                                e.userCount,
-                                e.percentage
-                              ]).toList();
+                              if (state.locationReports == null ||
+                                  state.locationReports!.isEmpty) {
+                                return;
+                              }
+                              final rows = state.locationReports!
+                                  .map(
+                                    (e) => [
+                                      e.country,
+                                      e.userCount,
+                                      e.percentage,
+                                    ],
+                                  )
+                                  .toList();
                               ExportHelper.exportToExcel(
                                 'Geography Report',
                                 ['Country', 'Users', 'Percentage'],
@@ -112,15 +155,23 @@ class ReportsExportsScreen extends ConsumerWidget {
                           _buildExportCard(
                             context: context,
                             title: 'Languages',
-                            description: 'Export user counts and distribution by language.',
+                            description:
+                                'Export user counts and distribution by language.',
                             icon: Icons.translate,
                             onExportCsv: () {
-                              if (state.languageReports == null || state.languageReports!.isEmpty) return;
-                              final rows = state.languageReports!.map((e) => [
-                                e.language,
-                                e.userCount,
-                                '${e.percentage.toStringAsFixed(1)}%'
-                              ]).toList();
+                              if (state.languageReports == null ||
+                                  state.languageReports!.isEmpty) {
+                                return;
+                              }
+                              final rows = state.languageReports!
+                                  .map(
+                                    (e) => [
+                                      e.language,
+                                      e.userCount,
+                                      '${e.percentage.toStringAsFixed(1)}%',
+                                    ],
+                                  )
+                                  .toList();
                               ExportHelper.exportToCsv(
                                 'Languages Report',
                                 ['Language', 'Users', 'Percentage'],
@@ -130,12 +181,19 @@ class ReportsExportsScreen extends ConsumerWidget {
                               );
                             },
                             onExportExcel: () {
-                              if (state.languageReports == null || state.languageReports!.isEmpty) return;
-                              final rows = state.languageReports!.map((e) => [
-                                e.language,
-                                e.userCount,
-                                e.percentage
-                              ]).toList();
+                              if (state.languageReports == null ||
+                                  state.languageReports!.isEmpty) {
+                                return;
+                              }
+                              final rows = state.languageReports!
+                                  .map(
+                                    (e) => [
+                                      e.language,
+                                      e.userCount,
+                                      e.percentage,
+                                    ],
+                                  )
+                                  .toList();
                               ExportHelper.exportToExcel(
                                 'Languages Report',
                                 ['Language', 'Users', 'Percentage'],
@@ -151,11 +209,18 @@ class ReportsExportsScreen extends ConsumerWidget {
                             description: 'Export daily new user registrations.',
                             icon: Icons.timeline,
                             onExportCsv: () {
-                              if (state.registrationTrends == null || state.registrationTrends!.isEmpty) return;
-                              final rows = state.registrationTrends!.map((e) => [
-                                DateFormat('yyyy-MM-dd').format(e.date),
-                                e.newUsers,
-                              ]).toList();
+                              if (state.registrationTrends == null ||
+                                  state.registrationTrends!.isEmpty) {
+                                return;
+                              }
+                              final rows = state.registrationTrends!
+                                  .map(
+                                    (e) => [
+                                      DateFormat('yyyy-MM-dd').format(e.date),
+                                      e.newUsers,
+                                    ],
+                                  )
+                                  .toList();
                               ExportHelper.exportToCsv(
                                 'Registration Trends Report',
                                 ['Date', 'New Users'],
@@ -165,11 +230,18 @@ class ReportsExportsScreen extends ConsumerWidget {
                               );
                             },
                             onExportExcel: () {
-                              if (state.registrationTrends == null || state.registrationTrends!.isEmpty) return;
-                              final rows = state.registrationTrends!.map((e) => [
-                                DateFormat('yyyy-MM-dd').format(e.date),
-                                e.newUsers,
-                              ]).toList();
+                              if (state.registrationTrends == null ||
+                                  state.registrationTrends!.isEmpty) {
+                                return;
+                              }
+                              final rows = state.registrationTrends!
+                                  .map(
+                                    (e) => [
+                                      DateFormat('yyyy-MM-dd').format(e.date),
+                                      e.newUsers,
+                                    ],
+                                  )
+                                  .toList();
                               ExportHelper.exportToExcel(
                                 'Registration Trends Report',
                                 ['Date', 'New Users'],
@@ -254,7 +326,10 @@ class ReportsExportsScreen extends ConsumerWidget {
               Expanded(
                 child: Text(
                   title,
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ],

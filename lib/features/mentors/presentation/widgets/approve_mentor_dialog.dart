@@ -8,7 +8,8 @@ class ApproveMentorDialog extends ConsumerStatefulWidget {
   const ApproveMentorDialog({super.key});
 
   @override
-  ConsumerState<ApproveMentorDialog> createState() => _ApproveMentorDialogState();
+  ConsumerState<ApproveMentorDialog> createState() =>
+      _ApproveMentorDialogState();
 }
 
 class _ApproveMentorDialogState extends ConsumerState<ApproveMentorDialog> {
@@ -46,7 +47,8 @@ class _ApproveMentorDialogState extends ConsumerState<ApproveMentorDialog> {
   @override
   Widget build(BuildContext context) {
     final filteredUsers = _eligibleUsers.where((user) {
-      final matchesSearch = user.displayName.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+      final matchesSearch =
+          user.displayName.toLowerCase().contains(_searchQuery.toLowerCase()) ||
           user.email.toLowerCase().contains(_searchQuery.toLowerCase());
       return matchesSearch;
     }).toList();
@@ -83,7 +85,9 @@ class _ApproveMentorDialogState extends ConsumerState<ApproveMentorDialog> {
               decoration: InputDecoration(
                 hintText: 'Search eligible users...',
                 prefixIcon: const Icon(Icons.search),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
               ),
               onChanged: (value) => setState(() => _searchQuery = value),
             ),
@@ -92,32 +96,40 @@ class _ApproveMentorDialogState extends ConsumerState<ApproveMentorDialog> {
               child: _isLoading
                   ? const Center(child: CircularProgressIndicator())
                   : _error != null
-                      ? Center(child: Text('Error loading users: $_error'))
-                      : filteredUsers.isEmpty
-                          ? const Center(child: Text('No eligible users found.'))
-                          : ListView.builder(
-                              itemCount: filteredUsers.length,
-                              itemBuilder: (context, index) {
-                                final user = filteredUsers[index];
-                                return Card(
-                                  margin: const EdgeInsets.only(bottom: 8),
-                                  child: ListTile(
-                                    leading: CircleAvatar(
-                                      child: Text(user.displayName.isNotEmpty ? user.displayName[0] : '?'),
-                                    ),
-                                    title: Text(user.displayName),
-                                    subtitle: Text(user.country ?? 'Unknown Country'),
-                                    trailing: ElevatedButton(
-                                      onPressed: () async {
-                                        await ref.read(mentorControllerProvider.notifier).promoteToMentor(user.uid);
-                                        if (context.mounted) Navigator.of(context).pop();
-                                      },
-                                      child: const Text('Approve'),
-                                    ),
-                                  ),
-                                );
-                              },
+                  ? Center(child: Text('Error loading users: $_error'))
+                  : filteredUsers.isEmpty
+                  ? const Center(child: Text('No eligible users found.'))
+                  : ListView.builder(
+                      itemCount: filteredUsers.length,
+                      itemBuilder: (context, index) {
+                        final user = filteredUsers[index];
+                        return Card(
+                          margin: const EdgeInsets.only(bottom: 8),
+                          child: ListTile(
+                            leading: CircleAvatar(
+                              child: Text(
+                                user.displayName.isNotEmpty
+                                    ? user.displayName[0]
+                                    : '?',
+                              ),
                             ),
+                            title: Text(user.displayName),
+                            subtitle: Text(user.country ?? 'Unknown Country'),
+                            trailing: ElevatedButton(
+                              onPressed: () async {
+                                await ref
+                                    .read(mentorControllerProvider.notifier)
+                                    .promoteToMentor(user.uid);
+                                if (context.mounted) {
+                                  Navigator.of(context).pop();
+                                }
+                              },
+                              child: const Text('Approve'),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
             ),
           ],
         ),

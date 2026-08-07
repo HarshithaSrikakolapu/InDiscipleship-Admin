@@ -23,17 +23,17 @@ class TopAppBar extends StatelessWidget implements PreferredSizeWidget {
       child: Row(
         children: [
           if (showMenuIcon)
-            IconButton(
-              icon: const Icon(Icons.menu),
-              onPressed: onMenuPressed,
-            ),
+            IconButton(icon: const Icon(Icons.menu), onPressed: onMenuPressed),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: TextField(
                 decoration: InputDecoration(
                   hintText: 'Search...',
-                  prefixIcon: const Icon(Icons.search, color: AppColors.textSecondary),
+                  prefixIcon: const Icon(
+                    Icons.search,
+                    color: AppColors.textSecondary,
+                  ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                     borderSide: BorderSide.none,

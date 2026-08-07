@@ -1,8 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 enum NotificationStatus { draft, scheduled, sending, sent, failed }
-enum NotificationTargetType { all, selectedUsers, selectedCountry, selectedLanguage, mentorsOnly }
+
+enum NotificationTargetType {
+  all,
+  selectedUsers,
+  selectedCountry,
+  selectedLanguage,
+  mentorsOnly,
+}
+
 enum NotificationDelivery { sendNow, schedule }
+
 enum NotificationPriority { high, normal, low }
 
 class NotificationModel {
@@ -127,14 +136,20 @@ class NotificationModel {
       'targetType': targetTypeStr,
       'targetValues': targetValues,
       'targetFilters': {
-        'countries': targetType == NotificationTargetType.selectedCountry ? targetValues : (targetFilters['countries'] ?? []),
-        'languages': targetType == NotificationTargetType.selectedLanguage ? targetValues : (targetFilters['languages'] ?? []),
+        'countries': targetType == NotificationTargetType.selectedCountry
+            ? targetValues
+            : (targetFilters['countries'] ?? []),
+        'languages': targetType == NotificationTargetType.selectedLanguage
+            ? targetValues
+            : (targetFilters['languages'] ?? []),
         'ageGroups': targetFilters['ageGroups'] ?? [],
         'organizations': targetFilters['organizations'] ?? [],
       },
       'deliveryType': deliveryType,
       'priority': priority.name,
-      'scheduledAt': scheduledAt != null ? Timestamp.fromDate(scheduledAt!) : null,
+      'scheduledAt': scheduledAt != null
+          ? Timestamp.fromDate(scheduledAt!)
+          : null,
       'status': status.name,
       'createdBy': createdBy,
       'createdAt': Timestamp.fromDate(createdAt),
@@ -153,7 +168,9 @@ class NotificationModel {
     // Reconstruct targetType from Firestore string (handling legacy camelCase format too)
     final String targetTypeStr = map['targetType'] ?? 'ALL';
     NotificationTargetType parsedTargetType;
-    List<String> parsedTargetValues = List<String>.from(map['targetValues'] ?? []);
+    List<String> parsedTargetValues = List<String>.from(
+      map['targetValues'] ?? [],
+    );
 
     // Reconstruct targetFilters map
     final Map<String, dynamic> rawFilters = map['targetFilters'] ?? {};
@@ -166,25 +183,31 @@ class NotificationModel {
 
     if (targetTypeStr == 'SELECTED_USERS' || targetTypeStr == 'selectedUsers') {
       parsedTargetType = NotificationTargetType.selectedUsers;
-    } else if (targetTypeStr == 'SELECTED_COUNTRY' || targetTypeStr == 'selectedCountry') {
+    } else if (targetTypeStr == 'SELECTED_COUNTRY' ||
+        targetTypeStr == 'selectedCountry') {
       parsedTargetType = NotificationTargetType.selectedCountry;
       if (parsedTargetFiltersCountries(parsedFilters).isNotEmpty) {
         parsedTargetValues = parsedTargetFiltersCountries(parsedFilters);
       }
-    } else if (targetTypeStr == 'SELECTED_LANGUAGE' || targetTypeStr == 'selectedLanguage') {
+    } else if (targetTypeStr == 'SELECTED_LANGUAGE' ||
+        targetTypeStr == 'selectedLanguage') {
       parsedTargetType = NotificationTargetType.selectedLanguage;
       if (parsedTargetFiltersLanguages(parsedFilters).isNotEmpty) {
         parsedTargetValues = parsedTargetFiltersLanguages(parsedFilters);
       }
-    } else if (targetTypeStr == 'MENTORS_ONLY' || targetTypeStr == 'mentorsOnly') {
+    } else if (targetTypeStr == 'MENTORS_ONLY' ||
+        targetTypeStr == 'mentorsOnly') {
       parsedTargetType = NotificationTargetType.mentorsOnly;
     } else {
       parsedTargetType = NotificationTargetType.all;
     }
 
     // Resolve deliveryType (handling legacy fields)
-    final String parsedDeliveryType = map['deliveryType'] ?? 
-        (map['delivery'] == 'schedule' || map['notificationType'] == 'scheduled' ? 'scheduled' : 'sendNow');
+    final String parsedDeliveryType =
+        map['deliveryType'] ??
+        (map['delivery'] == 'schedule' || map['notificationType'] == 'scheduled'
+            ? 'scheduled'
+            : 'sendNow');
 
     return NotificationModel(
       id: id,
@@ -200,15 +223,23 @@ class NotificationModel {
         (e) => e.name == map['priority'],
         orElse: () => NotificationPriority.normal,
       ),
-      scheduledAt: map['scheduledAt'] != null ? (map['scheduledAt'] as Timestamp).toDate() : null,
+      scheduledAt: map['scheduledAt'] != null
+          ? (map['scheduledAt'] as Timestamp).toDate()
+          : null,
       status: NotificationStatus.values.firstWhere(
         (e) => e.name == map['status'],
         orElse: () => NotificationStatus.draft,
       ),
       createdBy: map['createdBy'] ?? '',
-      createdAt: map['createdAt'] != null ? (map['createdAt'] as Timestamp).toDate() : DateTime.now(),
-      updatedAt: map['updatedAt'] != null ? (map['updatedAt'] as Timestamp).toDate() : DateTime.now(),
-      sentAt: map['sentAt'] != null ? (map['sentAt'] as Timestamp).toDate() : null,
+      createdAt: map['createdAt'] != null
+          ? (map['createdAt'] as Timestamp).toDate()
+          : DateTime.now(),
+      updatedAt: map['updatedAt'] != null
+          ? (map['updatedAt'] as Timestamp).toDate()
+          : DateTime.now(),
+      sentAt: map['sentAt'] != null
+          ? (map['sentAt'] as Timestamp).toDate()
+          : null,
       totalRecipients: map['totalRecipients'] ?? 0,
       delivered: map['delivered'] ?? 0,
       failed: map['failed'] ?? 0,
@@ -218,6 +249,10 @@ class NotificationModel {
     );
   }
 
-  static List<String> parsedTargetFiltersCountries(Map<String, List<String>> filters) => filters['countries'] ?? [];
-  static List<String> parsedTargetFiltersLanguages(Map<String, List<String>> filters) => filters['languages'] ?? [];
+  static List<String> parsedTargetFiltersCountries(
+    Map<String, List<String>> filters,
+  ) => filters['countries'] ?? [];
+  static List<String> parsedTargetFiltersLanguages(
+    Map<String, List<String>> filters,
+  ) => filters['languages'] ?? [];
 }

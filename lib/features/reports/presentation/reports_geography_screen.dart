@@ -22,9 +22,11 @@ class ReportsGeographyScreen extends ConsumerWidget {
               data: (state) {
                 final locationReports = state.locationReports;
                 if (locationReports == null || locationReports.isEmpty) {
-                  return const Center(child: Text('No location data available.'));
+                  return const Center(
+                    child: Text('No location data available.'),
+                  );
                 }
-                
+
                 return SingleChildScrollView(
                   padding: const EdgeInsets.all(24.0),
                   child: Column(
@@ -104,7 +106,9 @@ class ReportsGeographyScreen extends ConsumerWidget {
             rows: reports.map((r) {
               return DataRow(
                 cells: [
-                  DataCell(Text(r.country)), // Could add flags here using a flag package or mapping
+                  DataCell(
+                    Text(r.country),
+                  ), // Could add flags here using a flag package or mapping
                   DataCell(Text(r.userCount.toString())),
                   DataCell(Text('${r.percentage.toStringAsFixed(1)}%')),
                 ],
@@ -115,6 +119,7 @@ class ReportsGeographyScreen extends ConsumerWidget {
       ),
     );
   }
+
   Widget _buildPieChart(List<dynamic> reports) {
     final List<Color> colors = [
       Colors.blue.shade400,

@@ -36,9 +36,7 @@ class MyApp extends ConsumerWidget {
         GlobalCupertinoLocalizations.delegate,
         FlutterQuillLocalizations.delegate,
       ],
-      supportedLocales: const [
-        Locale('en', 'US'),
-      ],
+      supportedLocales: const [Locale('en', 'US')],
     );
   }
 }

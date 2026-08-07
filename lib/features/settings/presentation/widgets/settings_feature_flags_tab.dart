@@ -7,16 +7,15 @@ import '../../application/settings_providers.dart';
 class SettingsFeatureFlagsTab extends ConsumerStatefulWidget {
   final FeatureFlagsSettings settings;
 
-  const SettingsFeatureFlagsTab({
-    super.key,
-    required this.settings,
-  });
+  const SettingsFeatureFlagsTab({super.key, required this.settings});
 
   @override
-  ConsumerState<SettingsFeatureFlagsTab> createState() => _SettingsFeatureFlagsTabState();
+  ConsumerState<SettingsFeatureFlagsTab> createState() =>
+      _SettingsFeatureFlagsTabState();
 }
 
-class _SettingsFeatureFlagsTabState extends ConsumerState<SettingsFeatureFlagsTab> {
+class _SettingsFeatureFlagsTabState
+    extends ConsumerState<SettingsFeatureFlagsTab> {
   late Map<String, bool> _flags;
 
   // Static Group Definitions
@@ -109,8 +108,13 @@ class _SettingsFeatureFlagsTabState extends ConsumerState<SettingsFeatureFlagsTa
         return StatefulBuilder(
           builder: (context, setDialogState) {
             return AlertDialog(
-              title: const Text('Add Feature Flag', style: TextStyle(fontWeight: FontWeight.bold)),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              title: const Text(
+                'Add Feature Flag',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
               content: SingleChildScrollView(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -135,7 +139,8 @@ class _SettingsFeatureFlagsTabState extends ConsumerState<SettingsFeatureFlagsTa
                       title: const Text('Default Status (Enabled)'),
                       value: defaultVal,
                       contentPadding: EdgeInsets.zero,
-                      onChanged: (val) => setDialogState(() => defaultVal = val),
+                      onChanged: (val) =>
+                          setDialogState(() => defaultVal = val),
                     ),
                   ],
                 ),
@@ -152,14 +157,18 @@ class _SettingsFeatureFlagsTabState extends ConsumerState<SettingsFeatureFlagsTa
 
                     if (key.isEmpty) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Flag key cannot be empty')),
+                        const SnackBar(
+                          content: Text('Flag key cannot be empty'),
+                        ),
                       );
                       return;
                     }
 
                     if (_flags.containsKey(key)) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Flag key already exists')),
+                        const SnackBar(
+                          content: Text('Flag key already exists'),
+                        ),
                       );
                       return;
                     }
@@ -173,7 +182,10 @@ class _SettingsFeatureFlagsTabState extends ConsumerState<SettingsFeatureFlagsTa
 
                     Navigator.pop(context);
                   },
-                  style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary, foregroundColor: Colors.white),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    foregroundColor: Colors.white,
+                  ),
                   child: const Text('Add Flag'),
                 ),
               ],
@@ -191,10 +203,10 @@ class _SettingsFeatureFlagsTabState extends ConsumerState<SettingsFeatureFlagsTa
 
     // Group the flags
     final Map<String, List<String>> categorizedFlags = {};
-    _flags.keys.forEach((key) {
+    for (var key in _flags.keys) {
       final category = _getFlagCategory(key);
       categorizedFlags.putIfAbsent(category, () => []).add(key);
-    });
+    }
 
     final categories = categorizedFlags.keys.toList();
     // Move 'Additional Custom Features' to the end if present
@@ -215,12 +227,19 @@ class _SettingsFeatureFlagsTabState extends ConsumerState<SettingsFeatureFlagsTa
               children: const [
                 Text(
                   'Feature Management',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
+                  ),
                 ),
                 SizedBox(height: 4),
                 Text(
                   'Instantly enable or disable app capabilities for mobile client instances.',
-                  style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
+                  style: TextStyle(
+                    color: AppColors.textSecondary,
+                    fontSize: 14,
+                  ),
                 ),
               ],
             ),
@@ -232,7 +251,9 @@ class _SettingsFeatureFlagsTabState extends ConsumerState<SettingsFeatureFlagsTa
                 backgroundColor: Colors.white,
                 foregroundColor: AppColors.primary,
                 side: const BorderSide(color: AppColors.primary),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
               ),
             ),
           ],
@@ -261,7 +282,11 @@ class _SettingsFeatureFlagsTabState extends ConsumerState<SettingsFeatureFlagsTa
                   children: [
                     Text(
                       categoryName,
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textPrimary,
+                      ),
                     ),
                     const SizedBox(height: 16),
                     ...flagKeys.map((key) {
@@ -276,18 +301,26 @@ class _SettingsFeatureFlagsTabState extends ConsumerState<SettingsFeatureFlagsTa
                               children: [
                                 Text(
                                   _getFlagDisplayName(key),
-                                  style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: AppColors.textPrimary),
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 14,
+                                    color: AppColors.textPrimary,
+                                  ),
                                 ),
                                 const SizedBox(height: 2),
                                 Text(
                                   'Key: $key',
-                                  style: const TextStyle(fontFamily: 'Courier', fontSize: 12, color: AppColors.textSecondary),
+                                  style: const TextStyle(
+                                    fontFamily: 'Courier',
+                                    fontSize: 12,
+                                    color: AppColors.textSecondary,
+                                  ),
                                 ),
                               ],
                             ),
                             Switch(
                               value: val,
-                              activeColor: AppColors.success,
+                              activeThumbColor: AppColors.success,
                               onChanged: (newVal) {
                                 setState(() {
                                   _flags[key] = newVal;
@@ -314,15 +347,23 @@ class _SettingsFeatureFlagsTabState extends ConsumerState<SettingsFeatureFlagsTa
                   ? const SizedBox(
                       width: 16,
                       height: 16,
-                      child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
                     )
                   : const Icon(Icons.save),
               label: const Text('Save Feature Flags'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary,
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 16,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
               ),
             ),
           ],

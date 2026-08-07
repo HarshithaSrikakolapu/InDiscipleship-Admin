@@ -3,12 +3,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../domain/app_user.dart';
 import '../data/user_management_repository.dart';
 
-final userManagementControllerProvider = AsyncNotifierProvider<UserManagementController, void>(() {
-  return UserManagementController();
-});
+final userManagementControllerProvider =
+    AsyncNotifierProvider<UserManagementController, void>(() {
+      return UserManagementController();
+    });
 
 class UserManagementController extends AsyncNotifier<void> {
-  UserManagementRepository get _repository => ref.read(userManagementRepositoryProvider);
+  UserManagementRepository get _repository =>
+      ref.read(userManagementRepositoryProvider);
 
   @override
   FutureOr<void> build() {}
@@ -73,7 +75,10 @@ class UserManagementController extends AsyncNotifier<void> {
     }
   }
 
-  Future<bool> bulkUpdateAccountStatus(List<String> uids, AccountStatus status) async {
+  Future<bool> bulkUpdateAccountStatus(
+    List<String> uids,
+    AccountStatus status,
+  ) async {
     state = const AsyncValue.loading();
     try {
       await _repository.bulkUpdateAccountStatus(uids, status);
@@ -97,10 +102,20 @@ class UserManagementController extends AsyncNotifier<void> {
     }
   }
 
-  Future<bool> updateUserProfile(String uid, {String? displayName, String? country, String? language}) async {
+  Future<bool> updateUserProfile(
+    String uid, {
+    String? displayName,
+    String? country,
+    String? language,
+  }) async {
     state = const AsyncValue.loading();
     try {
-      await _repository.updateUserProfile(uid, displayName: displayName, country: country, language: language);
+      await _repository.updateUserProfile(
+        uid,
+        displayName: displayName,
+        country: country,
+        language: language,
+      );
       state = const AsyncValue.data(null);
       return true;
     } catch (e, st) {

@@ -44,42 +44,68 @@ class _AssignMentorDialogState extends ConsumerState<AssignMentorDialog> {
             TextField(
               decoration: InputDecoration(
                 hintText: 'Search mentors...',
-                prefixIcon: const Icon(Icons.search, color: AppColors.textSecondary),
+                prefixIcon: const Icon(
+                  Icons.search,
+                  color: AppColors.textSecondary,
+                ),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
                   borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
                 ),
                 contentPadding: const EdgeInsets.symmetric(horizontal: 16),
               ),
-              onChanged: (val) => setState(() => _searchQuery = val.toLowerCase()),
+              onChanged: (val) =>
+                  setState(() => _searchQuery = val.toLowerCase()),
             ),
             const SizedBox(height: 16),
             Expanded(
               child: mentorsAsync.when(
                 data: (mentors) {
-                  final activeMentors = mentors.where((m) => m.accountStatus == AccountStatus.active).toList();
-                  final filtered = activeMentors.where((m) =>
-                      m.displayName.toLowerCase().contains(_searchQuery) ||
-                      m.email.toLowerCase().contains(_searchQuery)).toList();
+                  final activeMentors = mentors
+                      .where((m) => m.accountStatus == AccountStatus.active)
+                      .toList();
+                  final filtered = activeMentors
+                      .where(
+                        (m) =>
+                            m.displayName.toLowerCase().contains(
+                              _searchQuery,
+                            ) ||
+                            m.email.toLowerCase().contains(_searchQuery),
+                      )
+                      .toList();
 
                   if (filtered.isEmpty) {
-                    return const Center(child: Text('No active mentors found.'));
+                    return const Center(
+                      child: Text('No active mentors found.'),
+                    );
                   }
 
                   return ListView.separated(
                     itemCount: filtered.length,
-                    separatorBuilder: (_, __) => const Divider(height: 1),
+                    separatorBuilder: (_, _) => const Divider(height: 1),
                     itemBuilder: (context, index) {
                       final mentor = filtered[index];
                       return ListTile(
                         leading: CircleAvatar(
-                          backgroundImage: mentor.photoUrl.isNotEmpty ? NetworkImage(mentor.photoUrl) : null,
-                          child: mentor.photoUrl.isEmpty ? Text(mentor.displayName.isNotEmpty ? mentor.displayName[0].toUpperCase() : '?') : null,
+                          backgroundImage: mentor.photoUrl.isNotEmpty
+                              ? NetworkImage(mentor.photoUrl)
+                              : null,
+                          child: mentor.photoUrl.isEmpty
+                              ? Text(
+                                  mentor.displayName.isNotEmpty
+                                      ? mentor.displayName[0].toUpperCase()
+                                      : '?',
+                                )
+                              : null,
                         ),
-                        title: Text(mentor.displayName, style: const TextStyle(fontWeight: FontWeight.bold)),
+                        title: Text(
+                          mentor.displayName,
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
                         subtitle: Text(mentor.email),
                         trailing: ElevatedButton(
-                          onPressed: () => Navigator.of(context).pop(mentor.uid),
+                          onPressed: () =>
+                              Navigator.of(context).pop(mentor.uid),
                           child: const Text('Assign'),
                         ),
                       );

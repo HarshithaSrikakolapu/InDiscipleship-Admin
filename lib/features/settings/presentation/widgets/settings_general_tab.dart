@@ -8,10 +8,7 @@ import '../../../auth/data/auth_repository.dart';
 class SettingsGeneralTab extends ConsumerStatefulWidget {
   final GeneralSettings settings;
 
-  const SettingsGeneralTab({
-    super.key,
-    required this.settings,
-  });
+  const SettingsGeneralTab({super.key, required this.settings});
 
   @override
   ConsumerState<SettingsGeneralTab> createState() => _SettingsGeneralTabState();
@@ -30,11 +27,19 @@ class _SettingsGeneralTabState extends ConsumerState<SettingsGeneralTab> {
   void initState() {
     super.initState();
     _appNameController = TextEditingController(text: widget.settings.appName);
-    _companyNameController = TextEditingController(text: widget.settings.companyName);
+    _companyNameController = TextEditingController(
+      text: widget.settings.companyName,
+    );
     _websiteController = TextEditingController(text: widget.settings.website);
-    _emailController = TextEditingController(text: widget.settings.supportEmail);
-    _phoneController = TextEditingController(text: widget.settings.supportPhone);
-    _addressController = TextEditingController(text: widget.settings.supportAddress);
+    _emailController = TextEditingController(
+      text: widget.settings.supportEmail,
+    );
+    _phoneController = TextEditingController(
+      text: widget.settings.supportPhone,
+    );
+    _addressController = TextEditingController(
+      text: widget.settings.supportAddress,
+    );
   }
 
   @override
@@ -125,7 +130,11 @@ class _SettingsGeneralTabState extends ConsumerState<SettingsGeneralTab> {
                 children: [
                   const Text(
                     'Global Application Info',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textPrimary,
+                    ),
                   ),
                   const SizedBox(height: 24),
                   Row(
@@ -134,7 +143,9 @@ class _SettingsGeneralTabState extends ConsumerState<SettingsGeneralTab> {
                         child: _buildTextField(
                           controller: _appNameController,
                           label: 'Application Name',
-                          validator: (v) => v!.trim().isEmpty ? 'Application Name is required' : null,
+                          validator: (v) => v!.trim().isEmpty
+                              ? 'Application Name is required'
+                              : null,
                         ),
                       ),
                       const SizedBox(width: 24),
@@ -142,7 +153,9 @@ class _SettingsGeneralTabState extends ConsumerState<SettingsGeneralTab> {
                         child: _buildTextField(
                           controller: _companyNameController,
                           label: 'Company Name',
-                          validator: (v) => v!.trim().isEmpty ? 'Company Name is required' : null,
+                          validator: (v) => v!.trim().isEmpty
+                              ? 'Company Name is required'
+                              : null,
                         ),
                       ),
                     ],
@@ -154,7 +167,9 @@ class _SettingsGeneralTabState extends ConsumerState<SettingsGeneralTab> {
                     validator: (v) {
                       if (v!.trim().isEmpty) return 'Website URL is required';
                       final uri = Uri.tryParse(v);
-                      if (uri == null || !uri.hasAbsolutePath) return 'Enter a valid URL (e.g., https://example.com)';
+                      if (uri == null || !uri.hasAbsolutePath) {
+                        return 'Enter a valid URL (e.g., https://example.com)';
+                      }
                       return null;
                     },
                   ),
@@ -177,7 +192,11 @@ class _SettingsGeneralTabState extends ConsumerState<SettingsGeneralTab> {
                 children: [
                   const Text(
                     'Contact & Support Details',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textPrimary,
+                    ),
                   ),
                   const SizedBox(height: 24),
                   Row(
@@ -187,9 +206,13 @@ class _SettingsGeneralTabState extends ConsumerState<SettingsGeneralTab> {
                           controller: _emailController,
                           label: 'Support Email Address',
                           validator: (v) {
-                            if (v!.trim().isEmpty) return 'Support Email is required';
+                            if (v!.trim().isEmpty) {
+                              return 'Support Email is required';
+                            }
                             final regex = RegExp(r'^[^@]+@[^@]+\.[^@]+$');
-                            if (!regex.hasMatch(v)) return 'Enter a valid email address';
+                            if (!regex.hasMatch(v)) {
+                              return 'Enter a valid email address';
+                            }
                             return null;
                           },
                         ),
@@ -220,7 +243,10 @@ class _SettingsGeneralTabState extends ConsumerState<SettingsGeneralTab> {
               if (widget.settings.updatedBy.isNotEmpty)
                 Text(
                   'Last updated by ${widget.settings.updatedBy}',
-                  style: const TextStyle(color: AppColors.textSecondary, fontSize: 13),
+                  style: const TextStyle(
+                    color: AppColors.textSecondary,
+                    fontSize: 13,
+                  ),
                 )
               else
                 const SizedBox.shrink(),
@@ -230,15 +256,23 @@ class _SettingsGeneralTabState extends ConsumerState<SettingsGeneralTab> {
                     ? const SizedBox(
                         width: 16,
                         height: 16,
-                        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
                       )
                     : const Icon(Icons.save),
                 label: const Text('Save General Settings'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary,
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 16,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                 ),
               ),
             ],
@@ -261,7 +295,10 @@ class _SettingsGeneralTabState extends ConsumerState<SettingsGeneralTab> {
       style: const TextStyle(color: AppColors.textPrimary, fontSize: 15),
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: const TextStyle(color: AppColors.textSecondary, fontSize: 14),
+        labelStyle: const TextStyle(
+          color: AppColors.textSecondary,
+          fontSize: 14,
+        ),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
@@ -273,7 +310,10 @@ class _SettingsGeneralTabState extends ConsumerState<SettingsGeneralTab> {
         ),
         filled: true,
         fillColor: Colors.white,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 16,
+        ),
       ),
     );
   }

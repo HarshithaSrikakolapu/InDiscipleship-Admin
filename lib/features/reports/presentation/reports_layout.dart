@@ -10,4 +10,3 @@ class ReportsLayout extends StatelessWidget {
     return child;
   }
 }
-

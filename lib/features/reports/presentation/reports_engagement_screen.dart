@@ -22,9 +22,11 @@ class ReportsEngagementScreen extends ConsumerWidget {
               data: (state) {
                 final lessonEngagement = state.lessonEngagement;
                 if (lessonEngagement == null || lessonEngagement.isEmpty) {
-                  return const Center(child: Text('No engagement data available.'));
+                  return const Center(
+                    child: Text('No engagement data available.'),
+                  );
                 }
-                
+
                 return SingleChildScrollView(
                   padding: const EdgeInsets.all(24.0),
                   child: Column(
@@ -90,10 +92,14 @@ class ReportsEngagementScreen extends ConsumerWidget {
             child: BarChart(
               BarChartData(
                 alignment: BarChartAlignment.spaceAround,
-                maxY: topEngagement.fold<double>(
-                  0, 
-                  (max, e) => e.startedCount > max ? e.startedCount.toDouble() : max
-                ) * 1.2,
+                maxY:
+                    topEngagement.fold<double>(
+                      0,
+                      (max, e) => e.startedCount > max
+                          ? e.startedCount.toDouble()
+                          : max,
+                    ) *
+                    1.2,
                 barTouchData: BarTouchData(enabled: true),
                 titlesData: FlTitlesData(
                   show: true,
@@ -101,13 +107,21 @@ class ReportsEngagementScreen extends ConsumerWidget {
                     sideTitles: SideTitles(
                       showTitles: true,
                       getTitlesWidget: (value, meta) {
-                        if (value.toInt() < 0 || value.toInt() >= topEngagement.length) return const SizedBox.shrink();
+                        if (value.toInt() < 0 ||
+                            value.toInt() >= topEngagement.length) {
+                          return const SizedBox.shrink();
+                        }
                         final title = topEngagement[value.toInt()].lessonTitle;
                         return Padding(
                           padding: const EdgeInsets.only(top: 8.0),
                           child: Text(
-                            title.length > 15 ? '${title.substring(0, 15)}...' : title,
-                            style: const TextStyle(fontSize: 10, color: Color(0xFF475569)),
+                            title.length > 15
+                                ? '${title.substring(0, 15)}...'
+                                : title,
+                            style: const TextStyle(
+                              fontSize: 10,
+                              color: Color(0xFF475569),
+                            ),
                           ),
                         );
                       },
@@ -117,8 +131,12 @@ class ReportsEngagementScreen extends ConsumerWidget {
                   leftTitles: const AxisTitles(
                     sideTitles: SideTitles(showTitles: true, reservedSize: 40),
                   ),
-                  topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                  rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  topTitles: const AxisTitles(
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
+                  rightTitles: const AxisTitles(
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
                 ),
                 gridData: const FlGridData(show: false),
                 borderData: FlBorderData(show: false),
@@ -169,7 +187,10 @@ class ReportsEngagementScreen extends ConsumerWidget {
           decoration: BoxDecoration(color: color, shape: BoxShape.circle),
         ),
         const SizedBox(width: 8),
-        Text(text, style: const TextStyle(fontSize: 12, color: Color(0xFF475569))),
+        Text(
+          text,
+          style: const TextStyle(fontSize: 12, color: Color(0xFF475569)),
+        ),
       ],
     );
   }
@@ -193,7 +214,10 @@ class ReportsEngagementScreen extends ConsumerWidget {
           ),
           const Divider(height: 1),
           DataTable(
-            headingTextStyle: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF475569)),
+            headingTextStyle: const TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF475569),
+            ),
             columns: const [
               DataColumn(label: Text('Lesson Title')),
               DataColumn(label: Text('Started')),
@@ -210,7 +234,11 @@ class ReportsEngagementScreen extends ConsumerWidget {
                     Text(
                       '${e.completionRate.toStringAsFixed(1)}%',
                       style: TextStyle(
-                        color: e.completionRate > 75 ? Colors.green : (e.completionRate < 25 ? Colors.red : Colors.orange),
+                        color: e.completionRate > 75
+                            ? Colors.green
+                            : (e.completionRate < 25
+                                  ? Colors.red
+                                  : Colors.orange),
                         fontWeight: FontWeight.bold,
                       ),
                     ),

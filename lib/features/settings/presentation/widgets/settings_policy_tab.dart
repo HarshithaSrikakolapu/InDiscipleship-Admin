@@ -130,11 +130,16 @@ class _SettingsPolicyTabState extends ConsumerState<SettingsPolicyTab> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Publish ${widget.title}', style: const TextStyle(fontWeight: FontWeight.bold)),
+          title: Text(
+            'Publish ${widget.title}',
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
           content: Text(
             'Are you sure you want to publish this version? This will update the live policy for all mobile users, increment the version, and record you as the publisher.',
           ),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context, false),
@@ -142,7 +147,10 @@ class _SettingsPolicyTabState extends ConsumerState<SettingsPolicyTab> {
             ),
             ElevatedButton(
               onPressed: () => Navigator.pop(context, true),
-              style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary, foregroundColor: Colors.white),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary,
+                foregroundColor: Colors.white,
+              ),
               child: const Text('Confirm Publish'),
             ),
           ],
@@ -162,7 +170,9 @@ class _SettingsPolicyTabState extends ConsumerState<SettingsPolicyTab> {
       if (success) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('${widget.title} published and live! (Version ${widget.version + 1})'),
+            content: Text(
+              '${widget.title} published and live! (Version ${widget.version + 1})',
+            ),
             backgroundColor: AppColors.success,
           ),
         );
@@ -174,10 +184,7 @@ class _SettingsPolicyTabState extends ConsumerState<SettingsPolicyTab> {
 
   void _showError(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: AppColors.danger,
-      ),
+      SnackBar(content: Text(message), backgroundColor: AppColors.danger),
     );
   }
 
@@ -195,16 +202,23 @@ class _SettingsPolicyTabState extends ConsumerState<SettingsPolicyTab> {
               children: [
                 Text(
                   widget.title,
-                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
+                  ),
                 ),
                 if (widget.version > 0) ...[
                   const SizedBox(height: 4),
                   Row(
                     children: [
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 2,
+                        ),
                         decoration: BoxDecoration(
-                          color: AppColors.primary.withOpacity(0.1),
+                          color: AppColors.primary.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(
@@ -219,7 +233,10 @@ class _SettingsPolicyTabState extends ConsumerState<SettingsPolicyTab> {
                       const SizedBox(width: 8),
                       Text(
                         'Published by ${widget.publishedBy}',
-                        style: const TextStyle(color: AppColors.textSecondary, fontSize: 13),
+                        style: const TextStyle(
+                          color: AppColors.textSecondary,
+                          fontSize: 13,
+                        ),
                       ),
                     ],
                   ),
@@ -235,8 +252,16 @@ class _SettingsPolicyTabState extends ConsumerState<SettingsPolicyTab> {
               ),
               child: Row(
                 children: [
-                  _buildModeButton(label: 'Edit', isActive: _isEditing, onTap: () => setState(() => _isEditing = true)),
-                  _buildModeButton(label: 'Preview', isActive: !_isEditing, onTap: () => setState(() => _isEditing = false)),
+                  _buildModeButton(
+                    label: 'Edit',
+                    isActive: _isEditing,
+                    onTap: () => setState(() => _isEditing = true),
+                  ),
+                  _buildModeButton(
+                    label: 'Preview',
+                    isActive: !_isEditing,
+                    onTap: () => setState(() => _isEditing = false),
+                  ),
                 ],
               ),
             ),
@@ -280,7 +305,10 @@ class _SettingsPolicyTabState extends ConsumerState<SettingsPolicyTab> {
             if (widget.updatedBy.isNotEmpty)
               Text(
                 'Draft last saved by ${widget.updatedBy}',
-                style: const TextStyle(color: AppColors.textSecondary, fontSize: 13),
+                style: const TextStyle(
+                  color: AppColors.textSecondary,
+                  fontSize: 13,
+                ),
               )
             else
               const SizedBox.shrink(),
@@ -293,8 +321,13 @@ class _SettingsPolicyTabState extends ConsumerState<SettingsPolicyTab> {
                   style: OutlinedButton.styleFrom(
                     foregroundColor: AppColors.primary,
                     side: const BorderSide(color: AppColors.primary),
-                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 16,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
                   ),
                 ),
                 const SizedBox(width: 16),
@@ -305,8 +338,13 @@ class _SettingsPolicyTabState extends ConsumerState<SettingsPolicyTab> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.success,
                     foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 16,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
                   ),
                 ),
               ],
@@ -331,7 +369,13 @@ class _SettingsPolicyTabState extends ConsumerState<SettingsPolicyTab> {
           color: isActive ? Colors.white : Colors.transparent,
           borderRadius: BorderRadius.circular(6),
           boxShadow: isActive
-              ? [const BoxShadow(color: Colors.black12, blurRadius: 2, offset: Offset(0, 1))]
+              ? [
+                  const BoxShadow(
+                    color: Colors.black12,
+                    blurRadius: 2,
+                    offset: Offset(0, 1),
+                  ),
+                ]
               : null,
         ),
         child: Text(

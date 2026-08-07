@@ -45,14 +45,34 @@ class LessonModel {
       lessonTitle: json['lessonTitle'] as String? ?? '',
       topic: json['topic'] as String? ?? '',
       bibleVerse: json['bibleVerse'] as String? ?? '',
-      connect: (json['connect'] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [],
-      discover: (json['discover'] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [],
-      challenge: (json['challenge'] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [],
-      stillThirsty: (json['stillThirsty'] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [],
+      connect:
+          (json['connect'] as List<dynamic>?)
+              ?.map((e) => e.toString())
+              .toList() ??
+          [],
+      discover:
+          (json['discover'] as List<dynamic>?)
+              ?.map((e) => e.toString())
+              .toList() ??
+          [],
+      challenge:
+          (json['challenge'] as List<dynamic>?)
+              ?.map((e) => e.toString())
+              .toList() ??
+          [],
+      stillThirsty:
+          (json['stillThirsty'] as List<dynamic>?)
+              ?.map((e) => e.toString())
+              .toList() ??
+          [],
       estimatedMinutes: json['estimatedMinutes'] as int? ?? 12,
       isPublished: json['isPublished'] as bool? ?? false,
-      createdAt: json['createdAt'] != null ? (json['createdAt'] as Timestamp).toDate() : null,
-      updatedAt: json['updatedAt'] != null ? (json['updatedAt'] as Timestamp).toDate() : null,
+      createdAt: json['createdAt'] != null
+          ? (json['createdAt'] as Timestamp).toDate()
+          : null,
+      updatedAt: json['updatedAt'] != null
+          ? (json['updatedAt'] as Timestamp).toDate()
+          : null,
       createdBy: json['createdBy'] as String?,
       updatedBy: json['updatedBy'] as String?,
     );

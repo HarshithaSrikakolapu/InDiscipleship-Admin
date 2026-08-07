@@ -16,30 +16,46 @@ final additionalMetricsProvider = StreamProvider<AdditionalMetrics>((ref) {
   return ref.watch(dashboardRepositoryProvider).watchAdditionalMetrics();
 });
 
-final dashboardAnalyticsProvider = Provider<AsyncValue<DashboardAnalyticsModel>>((ref) {
-  final usersAsync = ref.watch(usersStreamProvider);
-  final lessonsAsync = ref.watch(lessonsStreamProvider);
-  final additionalAsync = ref.watch(additionalMetricsProvider);
+final dashboardAnalyticsProvider =
+    Provider<AsyncValue<DashboardAnalyticsModel>>((ref) {
+      final usersAsync = ref.watch(usersStreamProvider);
+      final lessonsAsync = ref.watch(lessonsStreamProvider);
+      final additionalAsync = ref.watch(additionalMetricsProvider);
 
-  if (usersAsync is AsyncLoading || lessonsAsync is AsyncLoading || additionalAsync is AsyncLoading) {
-    return const AsyncValue.loading();
-  }
+      if (usersAsync is AsyncLoading ||
+          lessonsAsync is AsyncLoading ||
+          additionalAsync is AsyncLoading) {
+        return const AsyncValue.loading();
+      }
 
-  if (usersAsync.hasError) return AsyncValue.error(usersAsync.error!, usersAsync.stackTrace!);
-  if (lessonsAsync.hasError) return AsyncValue.error(lessonsAsync.error!, lessonsAsync.stackTrace!);
-  if (additionalAsync.hasError) return AsyncValue.error(additionalAsync.error!, additionalAsync.stackTrace!);
+      if (usersAsync.hasError) {
+        return AsyncValue.error(usersAsync.error!, usersAsync.stackTrace!);
+      }
+      if (lessonsAsync.hasError) {
+        return AsyncValue.error(lessonsAsync.error!, lessonsAsync.stackTrace!);
+      }
+      if (additionalAsync.hasError) {
+        return AsyncValue.error(
+          additionalAsync.error!,
+          additionalAsync.stackTrace!,
+        );
+      }
 
-  final users = usersAsync.value ?? [];
-  final lessons = lessonsAsync.value ?? [];
-  final additional = additionalAsync.value ?? AdditionalMetrics();
+      final users = usersAsync.value ?? [];
+      final lessons = lessonsAsync.value ?? [];
+      final additional = additionalAsync.value ?? AdditionalMetrics();
 
-  return AsyncValue.data(_aggregate(users, lessons, additional));
-});
+      return AsyncValue.data(_aggregate(users, lessons, additional));
+    });
 
-DashboardAnalyticsModel _aggregate(List<AppUser> users, List<LessonModel> lessons, AdditionalMetrics additional) {
+DashboardAnalyticsModel _aggregate(
+  List<AppUser> users,
+  List<LessonModel> lessons,
+  AdditionalMetrics additional,
+) {
   final now = DateTime.now();
   final startOfToday = DateTime(now.year, now.month, now.day);
-  
+
   int activeUsers = 0;
   final monthlyReg = <String, int>{};
   for (int i = 5; i >= 0; i--) {
@@ -61,16 +77,16 @@ DashboardAnalyticsModel _aggregate(List<AppUser> users, List<LessonModel> lesson
         activeUsers++;
       }
     }
-    
+
     if (user.createdAt != null) {
-       final monthKey = _getMonthName(user.createdAt!.month);
-       if (monthlyReg.containsKey(monthKey)) {
-         monthlyReg[monthKey] = monthlyReg[monthKey]! + 1;
-       }
+      final monthKey = _getMonthName(user.createdAt!.month);
+      if (monthlyReg.containsKey(monthKey)) {
+        monthlyReg[monthKey] = monthlyReg[monthKey]! + 1;
+      }
     }
 
     if (user.platform != null && user.platform!.isNotEmpty) {
-       deviceDist[user.platform!] = (deviceDist[user.platform!] ?? 0) + 1;
+      deviceDist[user.platform!] = (deviceDist[user.platform!] ?? 0) + 1;
     }
 
     final age = user.ageGroup ?? 'Unknown';
@@ -86,13 +102,21 @@ DashboardAnalyticsModel _aggregate(List<AppUser> users, List<LessonModel> lesson
   }
 
   final sortedUsers = List<AppUser>.from(users)
-    ..sort((a, b) => (b.createdAt ?? DateTime(0)).compareTo(a.createdAt ?? DateTime(0)));
-  final recentUsers = sortedUsers.take(10).map((u) => {
-    'avatar': '',
-    'name': u.displayName,
-    'email': u.email,
-    'joinedDate': u.createdAt,
-  }).toList();
+    ..sort(
+      (a, b) =>
+          (b.createdAt ?? DateTime(0)).compareTo(a.createdAt ?? DateTime(0)),
+    );
+  final recentUsers = sortedUsers
+      .take(10)
+      .map(
+        (u) => {
+          'avatar': '',
+          'name': u.displayName,
+          'email': u.email,
+          'joinedDate': u.createdAt,
+        },
+      )
+      .toList();
 
   int published = 0;
   for (final l in lessons) {
@@ -100,14 +124,22 @@ DashboardAnalyticsModel _aggregate(List<AppUser> users, List<LessonModel> lesson
   }
 
   final sortedLessons = List<LessonModel>.from(lessons)
-    ..sort((a, b) => (b.updatedAt ?? DateTime(0)).compareTo(a.updatedAt ?? DateTime(0)));
-  final recentLessons = sortedLessons.take(10).map((l) => {
-    'lesson': l.lessonTitle,
-    'week': l.week,
-    'day': l.day,
-    'updatedBy': l.updatedBy ?? 'Admin',
-    'updatedTime': l.updatedAt,
-  }).toList();
+    ..sort(
+      (a, b) =>
+          (b.updatedAt ?? DateTime(0)).compareTo(a.updatedAt ?? DateTime(0)),
+    );
+  final recentLessons = sortedLessons
+      .take(10)
+      .map(
+        (l) => {
+          'lesson': l.lessonTitle,
+          'week': l.week,
+          'day': l.day,
+          'updatedBy': l.updatedBy ?? 'Admin',
+          'updatedTime': l.updatedAt,
+        },
+      )
+      .toList();
 
   final dailyActiveUsers = <String, int>{};
   for (int i = 6; i >= 1; i--) {
@@ -147,6 +179,19 @@ DashboardAnalyticsModel _aggregate(List<AppUser> users, List<LessonModel> lesson
 }
 
 String _getMonthName(int month) {
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const months = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ];
   return month >= 1 && month <= 12 ? months[month - 1] : '';
 }
