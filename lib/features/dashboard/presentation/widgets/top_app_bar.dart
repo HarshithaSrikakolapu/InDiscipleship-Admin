@@ -45,15 +45,6 @@ class TopAppBar extends StatelessWidget implements PreferredSizeWidget {
               ),
             ),
           ),
-          IconButton(
-            icon: const Icon(Icons.notifications_outlined),
-            onPressed: () {},
-          ),
-          const SizedBox(width: 8),
-          const CircleAvatar(
-            backgroundColor: AppColors.primary,
-            child: Icon(Icons.person, color: Colors.white),
-          ),
         ],
       ),
     );
